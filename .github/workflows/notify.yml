@@ -1,0 +1,20 @@
+name: Telegram notification
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  notification:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: send custom message with args
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: New pull request ${{ github.event.path }}
+
+
+
