@@ -5,10 +5,13 @@ from django.db.models.signals import post_save
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     coins = models.PositiveIntegerField(default=100)
 
 
 @receiver(post_save, sender=User)
-def extend_user(sender, instance, **kwargs):
-    UserProfile(user=instance).save()
+def extend_user(sender, instance, created, **kwargs):
+    if created:
+        UserProfile(user=instance).save()
+    else:
+        instance.profile.save()
