@@ -1,0 +1,103 @@
+/* MAIN CSS FILE */
+
+/* Defines variables and basic style for multiple
+elements */
+
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@200;400;900&display=swap');
+
+:root {
+    --main-color: #2A2D34;
+    --main-color-light: #D3D4D9;
+    --primary-color: #4062BB;
+    --secondary-color: #B10F2E;
+
+    --base-distance: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Raleway', sans-serif;
+}
+
+body,
+html {
+    margin: 0;
+    height: 100%;
+
+    background-color: var(--main-color);
+}
+
+body {
+    display: flex;
+    flex-flow: column;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin: 0;
+}
+
+input {
+    padding: var(--base-distance);
+}
+
+.button {
+    font-size: 1em;
+    text-align: center;
+    text-decoration: none;
+    background-color: var(--primary-color);
+    color: white;
+    border: 0;
+    padding: var(--base-distance);
+}
+
+.button:hover {
+    background-color: var(--main-color-light);
+    color: var(--secondary-color);
+}
+
+.button:active {
+    transform: scale(0.95);
+}
+
+/* base.html specific */
+body>header {
+    color: white;
+    padding: var(--base-distance);
+
+    display: flex;
+    justify-content: center;
+
+    box-shadow: 0px 10px 22px 0px rgba(0, 0, 0, 0.2);
+}
+
+body>header>article {
+    width: 1000px;
+}
+
+body>header>article>h1 {
+    font-size: 2em;
+}
+
+body>header>article>h1>em {
+    color: var(--primary-color);
+    font-style: normal;
+}
+
+body>header>article>nav {
+    width: 100%;
+    display: flex;
+}
+
+body>main {
+    flex-grow: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
