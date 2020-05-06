@@ -8,13 +8,13 @@ current_games = defaultdict(int)
 
 
 class GameRoomConsumer(JsonWebsocketConsumer):
-    def create_room(self):
+    def join_room(self):
         async_to_sync(self.channel_layer.group_add)(
             self.room_name,
             self.channel_name
         )
 
-    def delete_room(self):
+    def leave_room(self):
         async_to_sync(self.channel_layer.group_discard)(
             self.room_name,
             self.channel_name
@@ -22,7 +22,6 @@ class GameRoomConsumer(JsonWebsocketConsumer):
 
     def room_send(self, data):
         async_to_sync(self.channel_layer.group_send)(self.room_name, data)
-
 
     def connect(self):
         self.user = self.scope['user']
@@ -32,8 +31,7 @@ class GameRoomConsumer(JsonWebsocketConsumer):
 
         self.room_name = self.scope['url_route']['kwargs']['room_name']
 
-        if current_games[self.room_name] == 0:
-            self.create_room()
+        self.join_room()
 
         current_games[self.room_name] += 1
 
@@ -43,8 +41,7 @@ class GameRoomConsumer(JsonWebsocketConsumer):
         self.close()
         current_games[self.room_name] -= 1
 
-        if current_games[self.room_name] == 0:
-            self.delete_room()
+        self.leave_room()
 
     def receive_json(self, json_data):
         message = json_data['message']
