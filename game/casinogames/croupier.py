@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from deck import Deck, Card, Suit, Rank
+from .deck import Deck, Card, Suit, Rank
 
 
 class Croupier:
@@ -20,12 +20,18 @@ class Croupier:
         self.table_cards = []
         self.init_game()
 
-    
+    def add_player(self, player):
+        self.players.append(player)
+
+
     @abstractmethod
     def init_game(self):
         pass
 
-
+    
+    # croupier does his job here
+    # after that calls update() on some players that send info to channels
+    
     @abstractmethod
     def process_move(self, channel_name, move):
         pass
