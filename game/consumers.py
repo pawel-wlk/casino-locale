@@ -5,7 +5,8 @@ from asgiref.sync import async_to_sync
 from collections import defaultdict
 from .casinogames.croupier import Croupier
 from .casinogames.player import Player
-
+from .casinogames.blackjack.blackjack_croupier import BlackjackCroupier
+from .casinogames.blackjack.blackjack_player import BlackjackPlayer
 
 current_games = defaultdict(int)
 
@@ -16,7 +17,7 @@ class GameRoomConsumer(JsonWebsocketConsumer):
             self.room_name,
             self.channel_name
         )
-        self.croupier = Croupier.get_instance(self.room_name)
+        self.croupier = BlackjackCroupier.get_instance(self.room_name)
 
     def leave_room(self):
         async_to_sync(self.channel_layer.group_discard)(
@@ -37,7 +38,7 @@ class GameRoomConsumer(JsonWebsocketConsumer):
 
         self.join_room()
 
-        player = Player(self.user.username, self.channel_name)
+        player = BlackjackPlayer(self.user.username, self.channel_name)
         self.croupier.add_player(player)
 
         current_games[self.room_name] += 1
@@ -55,17 +56,29 @@ class GameRoomConsumer(JsonWebsocketConsumer):
     def receive_json(self, json_data):
         message = json_data['message']
 
-        self.room_send(
-            {
-                # this field's value corresponds to the name of the method that will be called
-                'type': 'chat_message',
-                'message': message,
-                'sender': self.user.username
-            }
-        )
 
         if json_data['type'] == 'move':
-            self.croupier.process_move(self.channel_name, message)
+            if self.croupier.players[self.croupier.counter].channel_name == self.channel_name:
+                self.croupier.process_move(self.channel_name, message)
+        else:
+
+            self.room_send(
+                {
+                    # this field's value corresponds to the name of the method that will be called
+                    'type': 'chat_message',
+                    'message': message,
+                    'sender': self.user.username
+                }
+            )
+
+        
+    def notify(self, event):
+        message = event['message']
+        sender = event['sender']
+        # print(event)
+        # self.send_json({'message':message, 'sender': sender})
+        print(f"{self.user.username} notified that {sender} has {message}")
+
 
     def chat_message(self, event):
         message = event['message']

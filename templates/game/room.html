@@ -11,6 +11,11 @@
     <textarea id="chat-log" cols="100" rows="20"></textarea><br>
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
+
+    <input id="hit" type="button" value="Hit">
+    <input id="stand" type="button" value="Stand">
+
+
     {{ room_name|json_script:"room-name" }}
     <script>
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
@@ -48,6 +53,21 @@
             }));
             messageInputDom.value = '';
         };
+
+        document.querySelector('#hit').onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'move',
+                'message':'hit'
+            }))
+        }
+
+        document.querySelector('#stand').onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'move',
+                'message':'stand'
+            }))
+        }
+
     </script>
 </body>
 </html>

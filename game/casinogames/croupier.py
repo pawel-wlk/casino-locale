@@ -18,6 +18,7 @@ class Croupier:
         self.players = []
         self.deck = Deck()
         self.table_cards = []
+        self.counter = 0
         self.init_game()
 
     def add_player(self, player):
@@ -35,3 +36,4 @@ class Croupier:
     @abstractmethod
     def process_move(self, channel_name, move):
         pass
+        

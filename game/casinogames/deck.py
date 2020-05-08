@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import IntEnum, Enum
 from dataclasses import dataclass
 import random
 
@@ -10,7 +10,7 @@ class Suit(Enum):
     HEARTS = 3
 
 
-class Rank(Enum):
+class Rank(IntEnum):
     ACE = 11
     TWO = 2
     THREE = 3
