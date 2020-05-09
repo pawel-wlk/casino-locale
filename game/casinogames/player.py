@@ -1,11 +1,14 @@
 from abc import abstractmethod
+from .deck import Hand
+
 
 class Player:
     def __init__(self, username, channel_name):
         self.name = username
         self.channel_name = channel_name
-        self.hand = []
+        self.hand = Hand()
         self.game_data = {} # TO-DO
+        self.ready = False
 
 
     # update game -> send info to channels

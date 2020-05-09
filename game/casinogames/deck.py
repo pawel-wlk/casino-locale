@@ -46,3 +46,16 @@ class Deck:
         return_cards = self.cards[:count]
         self.cards = self.cards[count:]
         return return_cards
+
+
+class Hand:
+    def __init__(self):
+        self.cards = []
+
+
+    def add_cards(self, new_cards):
+        self.cards += new_cards
+
+    
+    def get_as_dict(self):
+        return [{'suit': c.suit.name, 'rank': c.rank.name} for c in self.cards]

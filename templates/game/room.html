@@ -12,6 +12,7 @@
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
 
+    <input id="ready" type="button" value="Ready">
     <input id="hit" type="button" value="Hit">
     <input id="stand" type="button" value="Stand">
 
@@ -30,7 +31,8 @@
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.sender + ': ' + data.message + '\n');
+            console.log(data)
+            document.querySelector('#chat-log').value += ('croupier: ' + data.message.croupier.sum + '; ' + data.message.players.map(p => p.player + ': ' + p.sum).join(', ') + '\n');
         };
 
         chatSocket.onclose = function(e) {
@@ -65,6 +67,13 @@
             chatSocket.send(JSON.stringify({
                 'type': 'move',
                 'message':'stand'
+            }))
+        }
+
+        document.querySelector('#ready').onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'init',
+                'message': 'ready'
             }))
         }
 

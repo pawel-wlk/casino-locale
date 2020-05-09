@@ -56,10 +56,11 @@ class GameRoomConsumer(JsonWebsocketConsumer):
     def receive_json(self, json_data):
         message = json_data['message']
 
-
         if json_data['type'] == 'move':
-            if self.croupier.players[self.croupier.counter].channel_name == self.channel_name:
-                self.croupier.process_move(self.channel_name, message)
+            self.croupier.process_move(self.channel_name, message)
+        elif json_data['type'] == 'init':
+            print(f'{self.user.username} is ready')
+            self.croupier.player_ready(self.channel_name)
         else:
 
             self.room_send(
@@ -76,8 +77,8 @@ class GameRoomConsumer(JsonWebsocketConsumer):
         message = event['message']
         sender = event['sender']
         # print(event)
-        # self.send_json({'message':message, 'sender': sender})
-        print(f"{self.user.username} notified that {sender} has {message}")
+        print(f"{self.user.username} was notified: {message}")
+        self.send_json({'message': message, 'sender': sender})
 
 
     def chat_message(self, event):
