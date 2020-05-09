@@ -15,6 +15,7 @@
     <input id="ready" type="button" value="Ready">
     <input id="hit" type="button" value="Hit">
     <input id="stand" type="button" value="Stand">
+    <input id="bet" type="button" value="Bet">
 
 
     {{ room_name|json_script:"room-name" }}
@@ -59,21 +60,30 @@
         document.querySelector('#hit').onclick = function(e) {
             chatSocket.send(JSON.stringify({
                 'type': 'move',
-                'message':'hit'
+                'message': { 'action': 'hit' }
             }))
         }
 
         document.querySelector('#stand').onclick = function(e) {
             chatSocket.send(JSON.stringify({
                 'type': 'move',
-                'message':'stand'
+                'message': { 'action': 'stand' }
             }))
         }
 
         document.querySelector('#ready').onclick = function(e) {
             chatSocket.send(JSON.stringify({
                 'type': 'init',
-                'message': 'ready'
+                'message': { 'action': 'ready' }
+            }))
+        }
+
+        document.querySelector('#bet').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'type': 'move',
+                'message': { 'action': 'bet', 'value': parseInt(message) }
             }))
         }
 

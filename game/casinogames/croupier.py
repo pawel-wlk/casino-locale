@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from .deck import Deck, Card, Suit, Rank
+from .deck import Deck, Card, Hand
 
 
 class Croupier:
@@ -17,8 +17,9 @@ class Croupier:
     def __init__(self):
         self.players = []
         self.deck = Deck()
-        self.table_cards = []
-        self.counter = 0
+        self.table_cards = Hand()
+        self.status = 'waiting'
+        self.pot = 0
         # self.init_game()
 
 
@@ -33,6 +34,18 @@ class Croupier:
         return True
 
 
+    def delete_player(self, channel_name):
+        res = [player for player in self.players if player.channel_name == channel_name]
+        if len(res) == 0:
+            return
+
+        deleted_player = res[0]
+        self.players.remove(deleted_player)
+
+        if deleted_player.his_turn:
+            self.next_turn()
+
+
     def player_ready(self, channel_name):
         res = [player for player in self.players if player.channel_name == channel_name]
         if len(res) == 0:
@@ -41,6 +54,17 @@ class Croupier:
         res[0].ready = True
         if res[0].status == 'waiting' and self.is_ready():
             self.init_game()
+
+
+    def next_turn(self):
+        search_res = [i for i, p in enumerate(self.players) if p.his_turn]
+        if len(search_res) == 0:
+            self.players[0].his_turn = True
+            return
+
+        i = search_res[0]
+        self.players[i].his_turn = False
+        self.players[(i + 1) % len(self.players)].his_turn = True
 
 
     @abstractmethod

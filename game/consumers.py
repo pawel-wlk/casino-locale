@@ -48,7 +48,7 @@ class GameRoomConsumer(JsonWebsocketConsumer):
     def disconnect(self, close_code):
         self.close()
         current_games[self.room_name] -= 1
-
+        self.croupier.delete_player(self.channel_name)
         self.leave_room()
 
     # receive_json is before chat_message

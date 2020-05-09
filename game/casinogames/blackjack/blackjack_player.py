@@ -13,3 +13,21 @@ class BlackjackPlayer(Player):
     def update(self, game_data):
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.send)(self.channel_name, {"type": "notify", "message": game_data, 'sender': self.name})
+
+
+    def calc_available_moves(self):
+        if self.status == 'waiting':
+            self.available_moves = ['get_ready']
+            return self.available_moves
+
+        if not self.his_turn:
+            self.available_moves = []
+            return []
+
+        self.available_moves = ['stand']
+        if self.status == 'betting':
+            self.available_moves.append('bet')
+        elif self.status == 'playing':
+            self.available_moves.append('hit')
+
+        return self.available_moves
