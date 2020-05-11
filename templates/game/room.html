@@ -15,6 +15,8 @@
     <input id="ready" type="button" value="Ready">
     <input id="hit" type="button" value="Hit">
     <input id="stand" type="button" value="Stand">
+    <input id="split" type="button" value="Split">
+    <input id="double" type="button" value="Double">
     <input id="bet" type="button" value="Bet">
 
 
@@ -77,6 +79,21 @@
                 'message': { 'action': 'ready' }
             }))
         }
+
+        document.querySelector('#split').onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'move',
+                'message': { 'action': 'split' }
+            }))
+        }
+        
+        document.querySelector('#double').onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'move',
+                'message': { 'action': 'double' }
+            }))
+        }
+
 
         document.querySelector('#bet').onclick = function(e) {
             const messageInputDom = document.querySelector('#chat-message-input');

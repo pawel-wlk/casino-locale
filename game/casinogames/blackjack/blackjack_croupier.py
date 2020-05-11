@@ -58,6 +58,8 @@ class BlackjackCroupier(Croupier):
                 hand_sum += 10
             else:
                 hand_sum += int(card.rank)
+        if hand_sum > 21 and Rank.ACE in [card.rank for card in hand.cards]:
+            hand_sum -= 10
         return hand_sum
 
 
@@ -73,8 +75,11 @@ class BlackjackCroupier(Croupier):
             print(f'{p.name}: not his turn')
             return
 
+
         def handle_bet(player, move):
             if move['action'] == 'bet':
+                if type(move["value"]) != int:
+                    return
                 print(f'{player.name} bets {move["value"]}')
                 self.pot += move['value']
                 player.balance -= move['value']
@@ -87,8 +92,41 @@ class BlackjackCroupier(Croupier):
 
 
         def handle_move(player, move):
-            print(f'{player.name} makes a move: {move["action"]}')
-            if move['action'] == 'hit':
+            # print(f'{player.name} makes a move: {move["action"]}')
+
+            if move['action'] == 'split':
+                if 'split' in player.available_moves:
+                    player.splitted = True
+                    player.second_hand = player.first_hand[1]
+                    player.first_hand = player.first_hand[0]
+                else:
+                    return
+
+            elif move['action'] == 'double':
+                if 'double' in player.available_moves:
+                    player.doubled = True
+                    self.pot -= player.balance
+                    player.balance *= 2
+                    player.hand.add_cards(self.deck.get_cards(1))
+                    if self.hand_sum(p.hand) > 21:
+                        player.status = 'lost'
+                        self.next_turn()
+                    else:
+                        self.next_turn()
+                else:
+                    return
+
+            elif player.splitted and move['action'] == 'hit':
+                player.hand.add_cards(self.deck.get_cards(1))
+                if self.hand_sum(p.hand) > 21:
+                    if player.hand == player.first_hand:
+                        player.hand = player.second_hand
+                    else:
+                        if self.hand_sum(player.first_hand) > 21:
+                            player.status = 'lost'
+                        self.next_turn()
+                
+            elif move['action'] == 'hit':
                 player.hand.add_cards(self.deck.get_cards(1))
                 if self.hand_sum(p.hand) > 21:
                     player.status = 'lost'
@@ -98,8 +136,13 @@ class BlackjackCroupier(Croupier):
                     self.next_turn()
 
             elif move['action'] == 'stand':
-                player.status = 'stand'
-                self.next_turn()
+                if player.splitted and player.hand == player.first_hand:
+                    player.hand = player.second_hand
+                else:
+                    if self.hand_sum(player.first_hand) < 21 and self.hand_sum(player.first_hand) > self.hand_sum(player.second_hand):
+                        player.hand = player.first_hand
+                    player.status = 'stand'
+                    self.next_turn()
             else:
                 return
 
