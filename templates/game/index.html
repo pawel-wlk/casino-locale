@@ -1,26 +1,29 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>Game Rooms</title>
-</head>
-<body>
-    What game room would you like to enter?<br>
-    <input id="room-name-input" type="text" size="100"><br>
-    <input id="room-name-submit" type="button" value="Enter">
+{% extends "base.html" %}
+
+{% block title %}
+<title>Game rooms</title>
+{% endblock title %}
+
+{% block content %}
+<div class="game-room">
+    <h1>What game room would you like to enter?</h1>
+    <input id="room-name-input" type="text" size="100">
+    <input id="room-name-submit" type="button" value="Enter" class="button">
 
     <script>
         document.querySelector('#room-name-input').focus();
-        document.querySelector('#room-name-input').onkeyup = function(e) {
+        document.querySelector('#room-name-input').onkeyup = function (e) {
             if (e.keyCode === 13) {  // enter, return
                 document.querySelector('#room-name-submit').click();
             }
         };
 
-        document.querySelector('#room-name-submit').onclick = function(e) {
+        document.querySelector('#room-name-submit').onclick = function (e) {
             var roomName = document.querySelector('#room-name-input').value;
-            window.location.pathname = 'game/' + roomName + '/';
+            if (roomName != "") {
+                window.location.pathname = 'game/' + roomName + '/';
+            }
         };
     </script>
-</body>
-</html>
+</div>
+{% endblock content%}
