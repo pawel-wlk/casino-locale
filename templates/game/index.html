@@ -1,31 +1,59 @@
 {% extends "base.html" %}
 
+{% block head %}
+{% load static %}
+<link href="{% static "games.css" %}" rel="stylesheet">
+{% endblock head %}
+
 {% block title %}
 <title>Game rooms</title>
 {% endblock title %}
 
 {% block content %}
-    Create a new room?<br>
-    <input id="room-name-input" type="text" size="100"><br>
-    <input id="room-name-submit" type="button" value="Enter"><br><br>
-    Available rooms:
-    {% for name, users in rooms %}
-    <p><a href="{{name}}">{{name}} || {{users}}</a></p>
-    {% endfor %}
-    <script>
-        document.querySelector('#room-name-input').focus();
-        document.querySelector('#room-name-input').onkeyup = function (e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#room-name-submit').click();
-            }
-        };
+<div class="container">
+    <article class="container shadowed-box">
+        <h2>
+            Create a new room?
+        </h2>
+        <div class="create-room">
+            <input id="room-name-input" type="text" placeholder="Room name">
+            <input id="room-name-submit" type="button" value="Enter" class="button">
+        </div>
+    </article>
 
-        document.querySelector('#room-name-submit').onclick = function (e) {
-            var roomName = document.querySelector('#room-name-input').value;
-            if (roomName != "") {
-                window.location.pathname = 'game/' + roomName + '/';
-            }
-        };
-    </script>
+    <article class="container shadowed-box">
+        <h2>
+            Available rooms:
+        </h2>
+        <ul class="rooms">
+            {% for name, users in rooms %}
+            <li>
+                {{name}} ({{users}})
+                <a href="{{name}}" class="button">
+                    Join
+                </a>
+            </li>
+            {% endfor %}
+
+        </ul>
+    </article>
+
+</div>
+
+<script>
+    document.querySelector('#room-name-input').focus();
+    document.querySelector('#room-name-input').onkeyup = function (e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#room-name-submit').click();
+        }
+    };
+
+    document.querySelector('#room-name-submit').onclick = function (e) {
+        var roomName = document.querySelector('#room-name-input').value;
+        if (roomName != "") {
+            window.location.pathname = 'game/' + roomName + '/';
+        }
+    };
+</script>
 </div>
 {% endblock content%}
