@@ -5,11 +5,13 @@
 {% endblock title %}
 
 {% block content %}
-<div class="game-room">
-    <h1>What game room would you like to enter?</h1>
-    <input id="room-name-input" type="text" size="100">
-    <input id="room-name-submit" type="button" value="Enter" class="button">
-
+    Create a new room?<br>
+    <input id="room-name-input" type="text" size="100"><br>
+    <input id="room-name-submit" type="button" value="Enter"><br><br>
+    Available rooms:
+    {% for name, users in rooms %}
+    <p><a href="{{name}}">{{name}} || {{users}}</a></p>
+    {% endfor %}
     <script>
         document.querySelector('#room-name-input').focus();
         document.querySelector('#room-name-input').onkeyup = function (e) {
