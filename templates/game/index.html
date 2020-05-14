@@ -1,31 +1,66 @@
 {% extends "base.html" %}
 
+{% block head %}
+{% load static %}
+<link href="{% static "games.css" %}" rel="stylesheet">
+{% endblock head %}
+
 {% block title %}
 <title>Game rooms</title>
 {% endblock title %}
 
 {% block content %}
-    Create a new room?<br>
-    <input id="room-name-input" type="text" size="100"><br>
-    <input id="room-name-submit" type="button" value="Enter"><br><br>
-    Available rooms:
-    {% for name, users in rooms %}
-    <p><a href="{{name}}">{{name}} || {{users}}</a></p>
-    {% endfor %}
-    <script>
-        document.querySelector('#room-name-input').focus();
-        document.querySelector('#room-name-input').onkeyup = function (e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#room-name-submit').click();
-            }
-        };
+<div class="container">
+    <form class="container shadowed-box" id="newroom">
+        <h2>
+            Create a new room?
+        </h2>
+        <ul class="game-choice">
+            <li>
+                <input type="radio" name="type" id="type-blackjack" value="blackjack" checked>
+                <label for="type-blackjack" class="button">Blackjack</label>
+            </li>
+            <li>
+                <input type="radio" name="type" id="type-poker" value="poker">
+                <label for="type-poker" class="button">Poker</label>
+            </li>
+        </ul>
+        <div class="create-room">
+            <input id="room-name-input" type="text" placeholder="Room name" name="roomName">
+            <input type="submit" value="Create" class="button">
+        </div>
+    </form>
 
-        document.querySelector('#room-name-submit').onclick = function (e) {
-            var roomName = document.querySelector('#room-name-input').value;
-            if (roomName != "") {
-                window.location.pathname = 'game/' + roomName + '/';
-            }
-        };
-    </script>
+    <article class="container shadowed-box">
+        <h2>
+            Available rooms:
+        </h2>
+        <ul class="rooms">
+            {% for name, users in rooms %}
+            <li>
+                {{name}} ({{users}})
+                <a href="{{name}}" class="button">
+                    Join
+                </a>
+            </li>
+            {% endfor %}
+
+        </ul>
+    </article>
+
+</div>
+
+<script>
+    document.getElementById("newroom").addEventListener('submit', e => {
+        e.preventDefault();
+        const type = e.target.elements.type.value;
+        const roomName = e.target.elements.roomName.value;
+
+        // create room
+        if (roomName != "") {
+            window.location.pathname = 'game/' + roomName + '/';
+        }
+    })
+</script>
 </div>
 {% endblock content%}
