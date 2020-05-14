@@ -11,15 +11,25 @@
 
 {% block content %}
 <div class="container">
-    <article class="container shadowed-box">
+    <form class="container shadowed-box" id="newroom">
         <h2>
             Create a new room?
         </h2>
+        <ul class="game-choice">
+            <li>
+                <input type="radio" name="type" id="type-blackjack" value="blackjack" checked>
+                <label for="type-blackjack" class="button">Blackjack</label>
+            </li>
+            <li>
+                <input type="radio" name="type" id="type-poker" value="poker">
+                <label for="type-poker" class="button">Poker</label>
+            </li>
+        </ul>
         <div class="create-room">
-            <input id="room-name-input" type="text" placeholder="Room name">
-            <input id="room-name-submit" type="button" value="Enter" class="button">
+            <input id="room-name-input" type="text" placeholder="Room name" name="roomName">
+            <input type="submit" value="Create" class="button">
         </div>
-    </article>
+    </form>
 
     <article class="container shadowed-box">
         <h2>
@@ -41,19 +51,16 @@
 </div>
 
 <script>
-    document.querySelector('#room-name-input').focus();
-    document.querySelector('#room-name-input').onkeyup = function (e) {
-        if (e.keyCode === 13) {  // enter, return
-            document.querySelector('#room-name-submit').click();
-        }
-    };
+    document.getElementById("newroom").addEventListener('submit', e => {
+        e.preventDefault();
+        const type = e.target.elements.type.value;
+        const roomName = e.target.elements.roomName.value;
 
-    document.querySelector('#room-name-submit').onclick = function (e) {
-        var roomName = document.querySelector('#room-name-input').value;
+        // create room
         if (roomName != "") {
             window.location.pathname = 'game/' + roomName + '/';
         }
-    };
+    })
 </script>
 </div>
 {% endblock content%}
