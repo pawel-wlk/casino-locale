@@ -11,7 +11,16 @@
     </h1>
     <textarea id="chat-log" cols="100" rows="20"></textarea><br>
     <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send" class="button">
+    <input id="chat-message-submit" type="button" value="Send">
+
+    <input id="ready" type="button" value="Ready">
+    <input id="hit" type="button" value="Hit">
+    <input id="stand" type="button" value="Stand">
+    <input id="split" type="button" value="Split">
+    <input id="double" type="button" value="Double">
+    <input id="bet" type="button" value="Bet">
+
+
     {{ room_name|json_script:"room-name" }}
     <script>
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
@@ -26,7 +35,8 @@
 
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.sender + ': ' + data.message + '\n');
+            console.log(data)
+            document.querySelector('#chat-log').value += ('croupier: ' + data.message.croupier.sum + '; ' + data.message.players.map(p => p.player + ': ' + p.sum).join(', ') + '\n');
         };
 
         chatSocket.onclose = function (e) {
@@ -44,10 +54,57 @@
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
-                'message': message
+                'message': message,
+                'type': 'not_move'
             }));
             messageInputDom.value = '';
         };
+
+        document.querySelector('#hit').onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'move',
+                'message': { 'action': 'hit' }
+            }))
+        }
+
+        document.querySelector('#stand').onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'move',
+                'message': { 'action': 'stand' }
+            }))
+        }
+
+        document.querySelector('#ready').onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'init',
+                'message': { 'action': 'ready' }
+            }))
+        }
+
+        document.querySelector('#split').onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'move',
+                'message': { 'action': 'split' }
+            }))
+        }
+        
+        document.querySelector('#double').onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'move',
+                'message': { 'action': 'double' }
+            }))
+        }
+
+
+        document.querySelector('#bet').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'type': 'move',
+                'message': { 'action': 'bet', 'value': parseInt(message) }
+            }))
+        }
+
     </script>
 </div>
 {% endblock content%}
