@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<span>Zalogowano jako: {{ username }}</span>
-<span>Stan konta: {{ coins }} </span>
-<a href="/logout/">Wyloguj</a>
+<div class="container">
+    <span>Zalogowano jako: {{ username }}</span>
+    <span>Stan konta: {{ coins }} </span>
+</div>
 {% endblock %}

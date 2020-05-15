@@ -1,0 +1,33 @@
+@import "./main.css";
+
+.registration {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 30%;
+    margin-top: 2rem;
+    box-shadow: 0px 0px 26px 10px rgba(0, 0, 0, 0.2);
+    padding: calc(var(--base-distance)*2);
+}
+
+.registration p {
+    margin: 1rem 0;
+}
+
+.registration a,
+.registration a:visited {
+    color: white;
+}
+
+.registration a:hover {
+    color: var(--main-color-light);
+}
+
+.registration>form>p>input {
+    margin-top: 0.5rem;
+    width: 100%;
+}
+
+.registration .button {
+    width: 100%;
+}

@@ -3,6 +3,11 @@ from django.contrib.auth import login, authenticate, logout
 from .forms import SignUpForm
 from .models import UserProfile
 
+nav_links = [
+    {"url": "/game/", "description": "Games"},
+    {"url": "/logout/", "description": "Logout"},
+]
+
 
 def SignUpView(request):
     if request.method == "POST":
@@ -27,6 +32,7 @@ def TestView(request):
             {
                 "username": request.user.get_username(),
                 "coins": UserProfile.objects.get(user=request.user).coins,
+                "nav_links": nav_links,
             },
         )
     else:
