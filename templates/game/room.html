@@ -22,13 +22,17 @@
 
 
     {{ room_name|json_script:"room-name" }}
+    {{ room_type|json_script:"room-type" }}
     <script>
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        const roomType = JSON.parse(document.getElementById('room-type').textContent);
 
         const chatSocket = new WebSocket(
             'ws://'
             + window.location.host
             + '/ws/room/'
+            + roomType
+            + '/'
             + roomName
             + '/'
         );

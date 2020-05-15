@@ -36,10 +36,10 @@
             Available rooms:
         </h2>
         <ul class="rooms">
-            {% for name, users in rooms %}
+            {% for name, room_data in rooms %}
             <li>
-                {{name}} ({{users}})
-                <a href="{{name}}" class="button">
+                {{name}} ({{room_data.room_type}}) - {{room_data.player_count}} player{% if room_data.player_count > 1 %}s{% endif %}
+                <a href="{{room_data.room_type}}/{{name}}" class="button">
                     Join
                 </a>
             </li>
@@ -58,7 +58,7 @@
 
         // create room
         if (roomName != "") {
-            window.location.pathname = 'game/' + roomName + '/';
+            window.location.pathname = 'game/' + type + '/' + roomName + '/';
         }
     })
 </script>

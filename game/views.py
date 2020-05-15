@@ -14,8 +14,9 @@ def index(request):
 
 
 @login_required(login_url="/login")
-def room(request, room_name):
+def room(request, room_type, room_name):
     return render(
         request, "game/room.html", {"room_name": room_name,
+                                    "room_type": room_type,
                                     "nav_links": nav_links, }
     )
