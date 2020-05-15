@@ -149,17 +149,17 @@ class BlackjackCroupier(Croupier):
             self.notify_all()
 
             # Croupier's turn
-            if self.players.index(player) == len(self.players) - 1:
-                while croupier_sum := self.hand_sum(self.table_cards) < 17:
+            if player.status != 'playing' and self.players.index(player) == len(self.players) - 1:
+                while (croupier_sum := self.hand_sum(self.table_cards)) < 17:
                     self.table_cards.add_cards(self.deck.get_cards(1))
 
-                m = max(self.hand_sum(p.hand) for p in self.players if p.status != 'lost')
-                if m > croupier_sum:
-                    winners = [p for p in self.players if self.hand_sum(p.hand) == m]
-                    print(f'Winners: {[p.name for p in winners]}')
-                    for winner in winners:
-                        winner.status = 'won'
-                        winner.balance += int(self.pot / len(winners))
+                print('dealer sum', croupier_sum)
+                winners = [p for p in self.players if (p.status != 'lost' and (self.hand_sum(p.hand) > croupier_sum or croupier_sum > 21)) or p.status == 'won']
+                print(f'Winners: {[p.name for p in winners]}')
+                for winner in winners:
+                    winner.status = 'won'
+                    winner.balance += int(self.pot / len(winners))
+                    
                 self.status = 'finished'
                 self.notify_all()
                 print("KONIEC")
