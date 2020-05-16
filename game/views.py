@@ -14,10 +14,12 @@ def index(request):
 
 
 @login_required(login_url="/login")
-def room(request, room_type, room_name):
+def room(request, room_name):
+    if room_name not in consumers.current_games:
+        return redirect('index')
+
     return render(
         request, "game/room.html", {"room_name": room_name,
-                                    "room_type": room_type,
                                     "nav_links": nav_links, }
     )
 
@@ -36,5 +38,5 @@ def create_room(request):
     consumers.current_games[name] = consumers.defaultRoom()
     consumers.current_games[name]['room_type'] = game_type
 
-    return redirect(f"/game/{game_type}/{name}")
+    return redirect(f"/game/{name}")
 

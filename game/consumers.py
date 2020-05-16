@@ -22,8 +22,6 @@ class GameRoomConsumer(JsonWebsocketConsumer):
             self.room_name,
             self.channel_name
         )
-        if (self.room_type == "blackjack"):
-            self.croupier = BlackjackCroupier.get_instance(self.room_name)
 
     def leave_room(self):
         async_to_sync(self.channel_layer.group_discard)(
@@ -41,14 +39,15 @@ class GameRoomConsumer(JsonWebsocketConsumer):
             return
 
         self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_type = self.scope['url_route']['kwargs']['room_type']
 
         self.join_room()
+
+        if current_games[self.room_name]['room_type']:
+            self.croupier = BlackjackCroupier.get_instance(self.room_name)
 
         player = BlackjackPlayer(self.user.username, self.channel_name)
         self.croupier.add_player(player)
 
-        current_games[self.room_name]['room_type'] = self.room_type
         current_games[self.room_name]['player_count'] += 1
 
         self.accept()
@@ -59,8 +58,6 @@ class GameRoomConsumer(JsonWebsocketConsumer):
 
         if current_games[self.room_name]['player_count'] == 0:
             del current_games[self.room_name]
-
-
 
         self.croupier.delete_player(self.channel_name)
         self.leave_room()
