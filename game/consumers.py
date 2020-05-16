@@ -21,20 +21,19 @@ class GameRoomConsumer(JsonWebsocketConsumer):
 
     def leave_room(self):
         async_to_sync(self.channel_layer.group_discard)(
-            self.room_name,
-            self.channel_name
+            self.room_name, self.channel_name
         )
 
     def room_send(self, data):
         async_to_sync(self.channel_layer.group_send)(self.room_name, data)
 
     def connect(self):
-        self.user = self.scope['user']
+        self.user = self.scope["user"]
 
         if self.user.is_anonymous:
             return
 
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
+        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
 
         self.join_room()
 
@@ -62,12 +61,12 @@ class GameRoomConsumer(JsonWebsocketConsumer):
     # receive_json is before chat_message
 
     def receive_json(self, json_data):
-        message = json_data['message']
+        message = json_data["message"]
 
-        if json_data['type'] == 'move':
+        if json_data["type"] == "move":
             self.croupier.process_move(self.channel_name, message)
-        elif json_data['type'] == 'init':
-            print(f'{self.user.username} is ready')
+        elif json_data["type"] == "init":
+            print(f"{self.user.username} is ready")
             self.croupier.player_ready(self.channel_name)
         elif json_data['type'] == 'config':
             if message['action'] == 'add_bot' and self.croupier.status == 'waiting':
@@ -84,21 +83,21 @@ class GameRoomConsumer(JsonWebsocketConsumer):
             self.room_send(
                 {
                     # this field's value corresponds to the name of the method that will be called
-                    'type': 'chat_message',
-                    'message': message,
-                    'sender': self.user.username
+                    "type": "chat_message",
+                    "message": message,
+                    "sender": self.user.username,
                 }
             )
 
     def notify(self, event):
-        message = event['message']
-        sender = event['sender']
+        message = event["message"]
+        sender = event["sender"]
         # print(event)
         print(f"{self.user.username} was notified: {message}")
         self.send_json({'message': message, 'sender': sender})
 
     def chat_message(self, event):
-        message = event['message']
-        sender = event['sender']
+        message = event["message"]
+        sender = event["sender"]
 
-        self.send_json({'message': message, 'sender': sender})
+        self.send_json({"message": message, "sender": sender})
