@@ -14,7 +14,7 @@ def defaultRoom():
         'player_count': 0
     }
 
-current_games = defaultdict(defaultRoom)
+current_games = {}
 
 class GameRoomConsumer(JsonWebsocketConsumer):
     def join_room(self):
@@ -56,6 +56,12 @@ class GameRoomConsumer(JsonWebsocketConsumer):
     def disconnect(self, close_code):
         self.close()
         current_games[self.room_name]['player_count'] -= 1
+
+        if current_games[self.room_name]['player_count'] == 0:
+            del current_games[self.room_name]
+
+
+
         self.croupier.delete_player(self.channel_name)
         self.leave_room()
 

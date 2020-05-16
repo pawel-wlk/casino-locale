@@ -11,7 +11,8 @@
 
 {% block content %}
 <div class="container">
-    <form class="container shadowed-box" id="newroom">
+    <form class="container shadowed-box" id="newroom" action="create" method="post">
+        {% csrf_token %}
         <h2>
             Create a new room?
         </h2>
@@ -51,16 +52,16 @@
 </div>
 
 <script>
-    document.getElementById("newroom").addEventListener('submit', e => {
-        e.preventDefault();
-        const type = e.target.elements.type.value;
-        const roomName = e.target.elements.roomName.value;
+    // document.getElementById("newroom").addEventListener('submit', e => {
+    //     e.preventDefault();
+    //     const type = e.target.elements.type.value;
+    //     const roomName = e.target.elements.roomName.value;
 
-        // create room
-        if (roomName != "") {
-            window.location.pathname = 'game/' + type + '/' + roomName + '/';
-        }
-    })
+    //     // create room
+    //     if (roomName != "") {
+    //         window.location.pathname = 'game/' + type + '/' + roomName + '/';
+    //     }
+    // })
 </script>
 </div>
 {% endblock content%}
