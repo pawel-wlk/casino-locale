@@ -10,13 +10,13 @@ class Croupier:
         if room_name in Croupier.instances:
             return Croupier.instances[room_name]
 
-        Croupier.instances[room_name] = cls()
+        Croupier.instances[room_name] = cls(2)
         return Croupier.instances[room_name]
 
     
-    def __init__(self):
+    def __init__(self, number_of_decks=1):
         self.players = []
-        self.deck = Deck()
+        self.deck = Deck(number_of_decks)
         self.table_cards = Hand()
         self.status = 'waiting'
         self.pot = 0
