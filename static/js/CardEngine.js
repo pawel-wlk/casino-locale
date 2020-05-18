@@ -14,8 +14,9 @@ export const defaultColors = {
 };
 
 export const defaultCardConfig = {
-    selectable = false,
-    selected = false,
+    selectable: true,
+    selected: false,
+    bakcground: '#0070ff'
 };
 
 export class Card {
@@ -31,23 +32,32 @@ export class Card {
         };
     }
 
-    inBoundary(pointerPosition, engineConfig) {
-        return pointerPosition.x >= this.position.x &&
-            pointerPosition.x <= this.position.x + engineConfig.cardWidth * engineConfig.width &&
-            pointerPosition.y >= this.position.y &&
-            pointerPosition.y <= this.position.y + engineConfig.cardHeight * engineConfig.height;
+    inBoundary(pointerEvent, engineConfig) {
+        return pointerEvent.layerX >= this.position.x &&
+            pointerEvent.layerX <= this.position.x + engineConfig.cardWidth * engineConfig.width &&
+            pointerEvent.layerY >= this.position.y &&
+            pointerEvent.layerY <= this.position.y + engineConfig.cardHeight * engineConfig.height;
+    }
+
+    drawMe(context, engineConfig) {
+        context.fillStyle = this.config.bakcground;
+        context.fillRect(
+            this.position.x,
+            this.position.y,
+            engineConfig.cardWidth * engineConfig.width,
+            engineConfig.cardHeight * engineConfig.height
+        );
     }
 }
 
 export const defaultEngineConfig = {
     cardHeight: 1 / 10,
     cardWidth: 1 / 14,
-    
+    background: 'transparent'
 };
 
 export class CardEngine {
     constructor(canvasElement, engineConfig = defaultEngineConfig) {
-        this.cardSize = cardSize;
         this.config = {
             height: canvasElement.height,
             width: canvasElement.width,
@@ -55,25 +65,56 @@ export class CardEngine {
         };
         this.ctx = canvasElement.getContext('2d');
         this.cards = [];
+        this.dragged = {
+            card: null,
+            lastX: 0,
+            lastY: 0,
+        };
 
-        canvasElement.addEventListeners('pointermove', event => {
-
+        canvasElement.addEventListener('pointermove', event => {
+            if (this.dragged.card) {
+                this.dragged.card.position.x -= this.dragged.lastX - (this.dragged.lastX = event.layerX);
+                this.dragged.card.position.y -= this.dragged.lastY - (this.dragged.lastY = event.layerY);
+            } else {
+                this.handleSelection(event);
+            }
         });
+
+        canvasElement.addEventListener('mousedown', event => {
+            if (this.dragged.card = this.handleSelection(event)) {
+                this.dragged.lastX = event.layerX;
+                this.dragged.lastY = event.layerY;
+                this.dragged.card.position.z++;
+            }
+        });
+
+        canvasElement.addEventListener('pointerout', () => this.dragged.card = null);
+        canvasElement.addEventListener('mouseup', () => this.dragged.card = null);
     }
 
-    handleSelection(pointerPosition) {
-        const highestZCard = null;
+    handleSelection(pointerEvent) {
+        let highestZCard = null;
 
         this.cards.forEach(card => {
-            if (card.inBoundary(pointerPosition, this.config)) {
+            if (card.inBoundary(pointerEvent, this.config)) {
                 if (card.config.selectable) {
-                    if (highestZCard === null || highestZCard.position.z < card.position.z) highestZCard = card;
+                    if (highestZCard === null || highestZCard.position.z < card.position.z) {
+                        highestZCard = card;
+                    }
                 }
             } else {
                 if (card.config.selectable) card.config.selected = false;
             }
         });
 
-        if (highestZCard) highestZCard.config.selected = true;
+        if (highestZCard) {
+            highestZCard.config.selected = true;
+        }
+        return highestZCard;
+    }
+
+    draw() {
+        this.ctx.clearRect(0, 0, this.config.width, this.config.height);
+        this.cards.forEach(card => card.drawMe(this.ctx, this.config));
     }
 }

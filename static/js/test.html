@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="module">
+        import { CardEngine, Card, defaultColors } from './CardEngine.js';
+
+        const engine = new CardEngine(document.querySelector('canvas'));
+        engine.cards.push(
+            new Card('3', defaultColors.clubs),
+            new Card('3', defaultColors.clubs),
+            new Card('3', defaultColors.clubs)
+        );
+        function draw() {
+            requestAnimationFrame(draw);
+            engine.draw();
+        }
+        draw();
+    </script>
+</head>
+
+<body>
+    <p>Test</p>
+    <canvas height="600" width="600" style="border: 1px solid black;"></canvas>
+</body>
+
+</html>
