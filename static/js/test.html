@@ -3,19 +3,45 @@
 
 <head>
     <script type="module">
-        import { CardEngine, Card, defaultColors } from './CardEngine.js';
+        import { CardEngine } from './modules/CardEngine.js';
+        import { Card, defaultColors } from './modules/Card.js';
+        import { Animation, createDefaultCallback } from './modules/Animation.js';
 
         const engine = new CardEngine(document.querySelector('canvas'));
-        engine.cards.push(
-            new Card('3', defaultColors.clubs),
-            new Card('3', defaultColors.clubs),
-            new Card('3', defaultColors.clubs)
+        const animatedCard = new Card('3', defaultColors.clubs);
+
+        engine.animations.push(
+            new Animation(1000, 300,
+                createDefaultCallback.position(
+                    animatedCard.position,
+                    { x: 0, y: 0 },
+                    { x: 100, y: 100 }
+                )
+            ),
+            new Animation(2000, 500,
+                createDefaultCallback.position(
+                    animatedCard.position,
+                    { x: 100, y: 100 },
+                    { x: 200, y: 100 }
+                )
+            ),
+            new Animation(2500, 1000,
+                createDefaultCallback.position(
+                    animatedCard.position,
+                    { x: 200, y: 100 },
+                    { x: 100, y: 200 }
+                )
+            ),
         );
-        function draw() {
+        engine.cards.push(
+            animatedCard
+        );
+
+        function draw(time) {
             requestAnimationFrame(draw);
-            engine.draw();
+            engine.draw(time);
         }
-        draw();
+        draw(0);
     </script>
 </head>
 

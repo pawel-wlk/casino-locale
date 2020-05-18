@@ -1,55 +1,3 @@
-export class CardColor {
-    constructor(displayName, symbol, color) {
-        this.displayName = displayName;
-        this.symbol = symbol;
-        this.color = color;
-    }
-}
-
-export const defaultColors = {
-    clubs: new CardColor('Clubs', '♣', '#000000'),
-    spades: new CardColor('Spades', '♠', "#000000"),
-    hearts: new CardColor('Hearts', '♥', '#ff0000'),
-    diamons: new CardColor('Diamons', '♦', '#ff000000')
-};
-
-export const defaultCardConfig = {
-    selectable: true,
-    selected: false,
-    bakcground: '#0070ff'
-};
-
-export class Card {
-    constructor(rank, color, cardConfig = defaultCardConfig) {
-        this.rank = rank;
-        this.color = color;
-        this.config = cardConfig;
-
-        this.position = { // top-left corner
-            x: 0,
-            y: 0,
-            z: 0
-        };
-    }
-
-    inBoundary(pointerEvent, engineConfig) {
-        return pointerEvent.layerX >= this.position.x &&
-            pointerEvent.layerX <= this.position.x + engineConfig.cardWidth * engineConfig.width &&
-            pointerEvent.layerY >= this.position.y &&
-            pointerEvent.layerY <= this.position.y + engineConfig.cardHeight * engineConfig.height;
-    }
-
-    drawMe(context, engineConfig) {
-        context.fillStyle = this.config.bakcground;
-        context.fillRect(
-            this.position.x,
-            this.position.y,
-            engineConfig.cardWidth * engineConfig.width,
-            engineConfig.cardHeight * engineConfig.height
-        );
-    }
-}
-
 export const defaultEngineConfig = {
     cardHeight: 1 / 10,
     cardWidth: 1 / 14,
@@ -65,6 +13,7 @@ export class CardEngine {
         };
         this.ctx = canvasElement.getContext('2d');
         this.cards = [];
+        this.animations = [];
         this.dragged = {
             card: null,
             lastX: 0,
@@ -80,13 +29,14 @@ export class CardEngine {
             }
         });
 
-        canvasElement.addEventListener('mousedown', event => {
-            if (this.dragged.card = this.handleSelection(event)) {
-                this.dragged.lastX = event.layerX;
-                this.dragged.lastY = event.layerY;
-                this.dragged.card.position.z++;
-            }
-        });
+        // we probably dont need this at all :((((
+        // canvasElement.addEventListener('mousedown', event => {
+        //     if (this.dragged.card = this.handleSelection(event)) {
+        //         this.dragged.lastX = event.layerX;
+        //         this.dragged.lastY = event.layerY;
+        //         this.dragged.card.position.z++;
+        //     }
+        // });
 
         canvasElement.addEventListener('pointerout', () => this.dragged.card = null);
         canvasElement.addEventListener('mouseup', () => this.dragged.card = null);
@@ -113,8 +63,14 @@ export class CardEngine {
         return highestZCard;
     }
 
-    draw() {
+    draw(time) {
         this.ctx.clearRect(0, 0, this.config.width, this.config.height);
+        this.animations = this.animations.filter(animation => {
+            if (animation.startTime <= time && time - animation.startTime <= animation.duration) {
+                animation.setAt(time);
+            }
+            return animation.startTime + animation.duration > time;
+        });
         this.cards.forEach(card => card.drawMe(this.ctx, this.config));
     }
 }
