@@ -7,20 +7,20 @@ export class CardColor {
 }
 
 export const defaultColors = {
-    clubs: new CardColor('Clubs', '♣', '#000000'),
-    spades: new CardColor('Spades', '♠', "#000000"),
-    hearts: new CardColor('Hearts', '♥', '#ff0000'),
-    diamons: new CardColor('Diamons', '♦', '#ff000000')
+    clubs: new CardColor('Clubs', '♣', '#2A2D34'),
+    spades: new CardColor('Spades', '♠', "#2A2D34"),
+    hearts: new CardColor('Hearts', '♥', '#B10F2E'),
+    diamons: new CardColor('Diamons', '♦', '#B10F2E')
 };
 
 export const defaultCardConfig = {
-    selectable: true,
+    selectable: false,
     selected: false,
-    bakcground: '#0070ff',
-    selectedBackground: '#0050df',
+    bakcground: '#4062BB',
+    selectedBackground: '#304a8c',
 };
 
-export class Card {
+export class Card /* implements GameObject */ {
     constructor(rank, color, cardConfig = defaultCardConfig) {
         this.rank = rank;
         this.color = color;
@@ -48,5 +48,11 @@ export class Card {
             engineConfig.cardWidth * engineConfig.width,
             engineConfig.cardHeight * engineConfig.height
         );
+        context.textBaseline = 'top';
+        context.fillStyle = this.color.color;
+        context.font = `${engineConfig.cardHeight * engineConfig.height / 4}px monospace`;
+        context.fillText(`${this.rank}${this.color.symbol}`,
+            this.position.x + engineConfig.cardHeight * engineConfig.height / 32,
+            this.position.y + engineConfig.cardWidth * engineConfig.width / 32);
     }
 }

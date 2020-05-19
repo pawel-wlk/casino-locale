@@ -7,39 +7,41 @@ export const defaultEngineConfig = {
 export class CardEngine {
     constructor(canvasElement, engineConfig = defaultEngineConfig) {
         this.config = {
+            ...engineConfig,
             height: canvasElement.height,
             width: canvasElement.width,
-            ...engineConfig
+            cardHeight: engineConfig.cardHeight / (canvasElement.height / canvasElement.width)
         };
         this.ctx = canvasElement.getContext('2d');
         this.cards = [];
         this.animations = [];
         this.dragged = {
-            card: null,
+            object: null,
             lastX: 0,
             lastY: 0,
         };
 
         canvasElement.addEventListener('pointermove', event => {
-            if (this.dragged.card) {
-                this.dragged.card.position.x -= this.dragged.lastX - (this.dragged.lastX = event.layerX);
-                this.dragged.card.position.y -= this.dragged.lastY - (this.dragged.lastY = event.layerY);
+            if (this.dragged.object) {
+                this.dragged.object.position.x -= this.dragged.lastX - event.layerX;
+                this.dragged.object.position.y -= this.dragged.lastY - event.layerY;
             } else {
                 this.handleSelection(event);
             }
+            this.dragged.lastX = event.layerX;
+            this.dragged.lastY = event.layerY;
         });
 
-        // we probably dont need this at all :((((
-        // canvasElement.addEventListener('mousedown', event => {
-        //     if (this.dragged.card = this.handleSelection(event)) {
-        //         this.dragged.lastX = event.layerX;
-        //         this.dragged.lastY = event.layerY;
-        //         this.dragged.card.position.z++;
-        //     }
-        // });
+        canvasElement.addEventListener('mousedown', event => {
+            if (this.dragged.object = this.handleSelection(event)) {
+                this.dragged.lastX = event.layerX;
+                this.dragged.lastY = event.layerY;
+                this.dragged.object.position.z++;
+            }
+        });
 
-        canvasElement.addEventListener('pointerout', () => this.dragged.card = null);
-        canvasElement.addEventListener('mouseup', () => this.dragged.card = null);
+        canvasElement.addEventListener('pointerout', () => this.dragged.object = null);
+        canvasElement.addEventListener('mouseup', () => this.dragged.object = null);
     }
 
     handleSelection(pointerEvent) {
@@ -68,6 +70,10 @@ export class CardEngine {
         this.animations = this.animations.filter(animation => {
             if (animation.startTime <= time && time - animation.startTime <= animation.duration) {
                 animation.setAt(time);
+                this.handleSelection({
+                    layerX: this.dragged.lastX,
+                    layerY: this.dragged.lastY
+                });
             }
             return animation.startTime + animation.duration > time;
         });

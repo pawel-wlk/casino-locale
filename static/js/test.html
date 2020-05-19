@@ -13,21 +13,21 @@
         engine.animations.push(
             new Animation(1000, 300,
                 createDefaultCallback.position(
-                    animatedCard.position,
+                    animatedCard,
                     { x: 0, y: 0 },
                     { x: 100, y: 100 }
                 )
             ),
             new Animation(2000, 500,
                 createDefaultCallback.position(
-                    animatedCard.position,
+                    animatedCard,
                     { x: 100, y: 100 },
                     { x: 200, y: 100 }
                 )
             ),
             new Animation(2500, 1000,
                 createDefaultCallback.position(
-                    animatedCard.position,
+                    animatedCard,
                     { x: 200, y: 100 },
                     { x: 100, y: 200 }
                 )
@@ -47,7 +47,7 @@
 
 <body>
     <p>Test</p>
-    <canvas height="600" width="600" style="border: 1px solid black;"></canvas>
+    <canvas height="800" width="1000" style="border: 1px solid black;"></canvas>
 </body>
 
 </html>
