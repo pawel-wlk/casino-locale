@@ -6,6 +6,7 @@
         import { CardEngine } from './modules/CardEngine.js';
         import { Card, defaultColors } from './modules/Card.js';
         import { Animation, createDefaultCallback } from './modules/Animation.js';
+        import { Token, defaultValues } from './modules/Token.js';
 
         const engine = new CardEngine(document.querySelector('canvas'));
         const animatedCard = new Card('3', defaultColors.clubs);
@@ -33,8 +34,9 @@
                 )
             ),
         );
-        engine.cards.push(
-            animatedCard
+        engine.objects.push(
+            animatedCard,
+            new Token(defaultValues[1000])
         );
 
         function draw(time) {
