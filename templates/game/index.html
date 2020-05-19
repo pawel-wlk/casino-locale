@@ -11,7 +11,8 @@
 
 {% block content %}
 <div class="container">
-    <form class="container shadowed-box" id="newroom">
+    <form class="container shadowed-box" id="newroom" action="" method="post">
+        {% csrf_token %}
         <h2>
             Create a new room?
         </h2>
@@ -29,6 +30,7 @@
             <input id="room-name-input" type="text" placeholder="Room name" name="roomName">
             <input type="submit" value="Create" class="button">
         </div>
+        <small>{{ error }}</small>
     </form>
 
     <article class="container shadowed-box">
@@ -36,9 +38,10 @@
             Available rooms:
         </h2>
         <ul class="rooms">
-            {% for name, users in rooms %}
+            {% for name, room_data in rooms %}
             <li>
-                {{name}} ({{users}})
+                {{name}} ({{room_data.room_type}}) - {{room_data.player_count}}
+                player{% if room_data.player_count > 1 %}s{% endif %}
                 <a href="{{name}}" class="button">
                     Join
                 </a>
@@ -50,17 +53,4 @@
 
 </div>
 
-<script>
-    document.getElementById("newroom").addEventListener('submit', e => {
-        e.preventDefault();
-        const type = e.target.elements.type.value;
-        const roomName = e.target.elements.roomName.value;
-
-        // create room
-        if (roomName != "") {
-            window.location.pathname = 'game/' + roomName + '/';
-        }
-    })
-</script>
-</div>
 {% endblock content%}

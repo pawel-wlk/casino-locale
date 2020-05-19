@@ -8,8 +8,13 @@ from .casinogames.player import Player
 from .casinogames.blackjack.blackjack_croupier import BlackjackCroupier
 from .casinogames.blackjack.blackjack_player import BlackjackPlayer
 
-current_games = defaultdict(int)
+def defaultRoom():
+    return {
+        'room_type': "",
+        'player_count': 0
+    }
 
+current_games = {}
 
 class GameRoomConsumer(JsonWebsocketConsumer):
     def join_room(self):
@@ -17,7 +22,6 @@ class GameRoomConsumer(JsonWebsocketConsumer):
             self.room_name,
             self.channel_name
         )
-        self.croupier = BlackjackCroupier.get_instance(self.room_name)
 
     def leave_room(self):
         async_to_sync(self.channel_layer.group_discard)(
@@ -38,16 +42,23 @@ class GameRoomConsumer(JsonWebsocketConsumer):
 
         self.join_room()
 
+        if current_games[self.room_name]['room_type']:
+            self.croupier = BlackjackCroupier.get_instance(self.room_name)
+
         player = BlackjackPlayer(self.user.username, self.channel_name)
         self.croupier.add_player(player)
 
-        current_games[self.room_name] += 1
+        current_games[self.room_name]['player_count'] += 1
 
         self.accept()
 
     def disconnect(self, close_code):
         self.close()
-        current_games[self.room_name] -= 1
+        current_games[self.room_name]['player_count'] -= 1
+
+        if current_games[self.room_name]['player_count'] == 0:
+            del current_games[self.room_name]
+
         self.croupier.delete_player(self.channel_name)
         self.leave_room()
 
