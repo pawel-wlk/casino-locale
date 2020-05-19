@@ -137,5 +137,203 @@ class Strategy:
                             Rank.ACE: Move(0, 'stand', '')
                         }
                         ),
+            PlayerCards({Rank.ACE, Rank.TWO}, 0,
+                        {
+                            Rank.TWO: Move(0, 'hit', ''), Rank.THREE: Move(0, 'hit', ''), 
+                            Rank.FOUR: Move(3, 'hit', 'double'), Rank.FIVE: Move(-0.0, 'double', 'hit'), 
+                            Rank.SIX: Move(-2, 'double', 'hit'), Rank.SEVEN: Move(0, 'hit', ''),
+                            Rank.EIGHT: Move(0, 'hit', ''), Rank.NINE: Move(0, 'hit', ''),
+                            Rank.TEN: Move(0, 'hit', ''), Rank.JACK: Move(0, 'hit', ''),
+                            Rank.QUEEN: Move(0, 'hit', ''), Rank.KING: Move(0, 'hit', ''),
+                            Rank.ACE: Move(0, 'hit', '')
+                        }
+                        ),
+            PlayerCards({Rank.ACE, Rank.THREE}, 0,
+                        {
+                            Rank.TWO: Move(0, 'hit', ''), Rank.THREE: Move(0, 'hit', ''), 
+                            Rank.FOUR: Move(1, 'hit', 'double'), Rank.FIVE: Move(-2, 'double', 'hit'), 
+                            Rank.SIX: Move(-5, 'double', 'hit'), Rank.SEVEN: Move(0, 'hit', ''),
+                            Rank.EIGHT: Move(0, 'hit', ''), Rank.NINE: Move(0, 'hit', ''),
+                            Rank.TEN: Move(0, 'hit', ''), Rank.JACK: Move(0, 'hit', ''),
+                            Rank.QUEEN: Move(0, 'hit', ''), Rank.KING: Move(0, 'hit', ''),
+                            Rank.ACE: Move(0, 'hit', '')
+                        }
+                        ),
+            PlayerCards({Rank.ACE, Rank.FOUR}, 0,
+                        {
+                            Rank.TWO: Move(0, 'hit', ''), Rank.THREE: Move(0, 'hit', ''), 
+                            Rank.FOUR: Move(-1, 'double', 'hit'), Rank.FIVE: Move(-5, 'double', 'hit'), 
+                            Rank.SIX: Move(0, 'double', ''), Rank.SEVEN: Move(0, 'hit', ''),
+                            Rank.EIGHT: Move(0, 'hit', ''), Rank.NINE: Move(0, 'hit', ''),
+                            Rank.TEN: Move(0, 'hit', ''), Rank.JACK: Move(0, 'hit', ''),
+                            Rank.QUEEN: Move(0, 'hit', ''), Rank.KING: Move(0, 'hit', ''),
+                            Rank.ACE: Move(0, 'hit', '')
+                        }
+                        ),
+            PlayerCards({Rank.ACE, Rank.FIVE}, 0,
+                        {
+                            Rank.TWO: Move(0, 'hit', ''), Rank.THREE: Move(4, 'hit', 'double'), 
+                            Rank.FOUR: Move(-3, 'double', 'hit'), Rank.FIVE: Move(0, 'double', ''), 
+                            Rank.SIX: Move(0, 'double', ''), Rank.SEVEN: Move(0, 'hit', ''),
+                            Rank.EIGHT: Move(0, 'hit', ''), Rank.NINE: Move(0, 'hit', ''),
+                            Rank.TEN: Move(0, 'hit', ''), Rank.JACK: Move(0, 'hit', ''),
+                            Rank.QUEEN: Move(0, 'hit', ''), Rank.KING: Move(0, 'hit', ''),
+                            Rank.ACE: Move(0, 'hit', '')
+                        }
+                        ),
+            PlayerCards({Rank.ACE, Rank.SIX}, 0,
+                        {
+                            Rank.TWO: Move(1, 'hit', 'double'), Rank.THREE: Move(-4, 'double', 'hit'), 
+                            Rank.FOUR: Move(0, 'double', ''), Rank.FIVE: Move(0, 'double', ''), 
+                            Rank.SIX: Move(0, 'double', ''), Rank.SEVEN: Move(0, 'hit', ''),
+                            Rank.EIGHT: Move(0, 'hit', ''), Rank.NINE: Move(0, 'hit', ''),
+                            Rank.TEN: Move(0, 'hit', ''), Rank.JACK: Move(0, 'hit', ''),
+                            Rank.QUEEN: Move(0, 'hit', ''), Rank.KING: Move(0, 'hit', ''),
+                            Rank.ACE: Move(0, 'hit', '')
+                        }
+                        ),
+            PlayerCards({Rank.ACE, Rank.SEVEN}, 0,
+                        {
+                            Rank.TWO: Move(0, 'stand', ''), Rank.THREE: Move(-3, 'double', 'hit'), 
+                            Rank.FOUR: Move(0, 'double', ''), Rank.FIVE: Move(0, 'double', ''), 
+                            Rank.SIX: Move(0, 'double', ''), Rank.SEVEN: Move(0, 'stand', ''),
+                            Rank.EIGHT: Move(0, 'stand', ''), Rank.NINE: Move(0, 'hit', ''),
+                            Rank.TEN: Move(0, 'hit', ''), Rank.JACK: Move(0, 'hit', ''),
+                            Rank.QUEEN: Move(0, 'hit', ''), Rank.KING: Move(0, 'hit', ''),
+                            Rank.ACE: Move(0, 'hit', '')
+                        }
+                        ),
+            PlayerCards({Rank.ACE, Rank.EIGHT}, 0,
+                        {
+                            Rank.TWO: Move(0, 'stand', ''), Rank.THREE: Move(0, 'stand', ''), 
+                            Rank.FOUR: Move(0, 'stand', ''), Rank.FIVE: Move(0, 'stand', ''), 
+                            Rank.SIX: Move(0, 'stand', ''), Rank.SEVEN: Move(0, 'stand', ''),
+                            Rank.EIGHT: Move(0, 'stand', ''), Rank.NINE: Move(0, 'stand', ''),
+                            Rank.TEN: Move(0, 'stand', ''), Rank.JACK: Move(0, 'stand', ''),
+                            Rank.QUEEN: Move(0, 'stand', ''), Rank.KING: Move(0, 'stand', ''),
+                            Rank.ACE: Move(0, 'stand', '')
+                        }
+                        ),
+            PlayerCards({Rank.ACE, Rank.NINE}, 0,
+                        {
+                            Rank.TWO: Move(0, 'stand', ''), Rank.THREE: Move(0, 'stand', ''), 
+                            Rank.FOUR: Move(0, 'stand', ''), Rank.FIVE: Move(0, 'stand', ''), 
+                            Rank.SIX: Move(0, 'stand', ''), Rank.SEVEN: Move(0, 'stand', ''),
+                            Rank.EIGHT: Move(0, 'stand', ''), Rank.NINE: Move(0, 'stand', ''),
+                            Rank.TEN: Move(0, 'stand', ''), Rank.JACK: Move(0, 'stand', ''),
+                            Rank.QUEEN: Move(0, 'stand', ''), Rank.KING: Move(0, 'stand', ''),
+                            Rank.ACE: Move(0, 'stand', '')
+                        }
+                        ),
+            PlayerCards({Rank.ACE}, 0,
+                        {
+                            Rank.TWO: Move(0, 'split', ''), Rank.THREE: Move(0, 'split', ''), 
+                            Rank.FOUR: Move(0, 'split', ''), Rank.FIVE: Move(0, 'split', ''), 
+                            Rank.SIX: Move(0, 'split', ''), Rank.SEVEN: Move(0, 'split', ''),
+                            Rank.EIGHT: Move(0, 'split', ''), Rank.NINE: Move(0, 'split', ''),
+                            Rank.TEN: Move(0, 'split', ''), Rank.JACK: Move(0, 'split', ''),
+                            Rank.QUEEN: Move(0, 'split', ''), Rank.KING: Move(0, 'split', ''),
+                            Rank.ACE: Move(0, 'split', '')
+                        }
+                        ),
+            PlayerCards({Rank.TWO}, 0,
+                        {
+                            Rank.TWO: Move(-4, 'split', 'hit'), Rank.THREE: Move(0, 'split', ''), 
+                            Rank.FOUR: Move(0, 'split', ''), Rank.FIVE: Move(0, 'split', ''), 
+                            Rank.SIX: Move(0, 'split', ''), Rank.SEVEN: Move(0, 'split', ''),
+                            Rank.EIGHT: Move(0, 'hit', ''), Rank.NINE: Move(0, 'hit', ''),
+                            Rank.TEN: Move(0, 'hit', ''), Rank.JACK: Move(0, 'hit', ''),
+                            Rank.QUEEN: Move(0, 'hit', ''), Rank.KING: Move(0, 'hit', ''),
+                            Rank.ACE: Move(0, 'hit', '')
+                        }
+                        ),
+            PlayerCards({Rank.THREE}, 0,
+                        {
+                            Rank.TWO: Move(-0.0, 'split', 'hit'), Rank.THREE: Move(-5, 'split', 'hit'), 
+                            Rank.FOUR: Move(0, 'split', ''), Rank.FIVE: Move(0, 'split', ''), 
+                            Rank.SIX: Move(0, 'split', ''), Rank.SEVEN: Move(0, 'split', ''),
+                            Rank.EIGHT: Move(4, 'hit', 'double'), Rank.NINE: Move(0, 'hit', ''),
+                            Rank.TEN: Move(0, 'hit', ''), Rank.JACK: Move(0, 'hit', ''),
+                            Rank.QUEEN: Move(0, 'hit', ''), Rank.KING: Move(0, 'hit', ''),
+                            Rank.ACE: Move(0, 'hit', '')
+                        }
+                        ),
+            PlayerCards({Rank.FOUR}, 0,
+                        {
+                            Rank.TWO: Move(0, 'hit', ''), Rank.THREE: Move(0, 'hit', ''), 
+                            Rank.FOUR: Move(1, 'hit', 'double'), Rank.FIVE: Move(-2, 'split', 'hit'), 
+                            Rank.SIX: Move(-5, 'split', 'hit'), Rank.SEVEN: Move(0, 'hit', ''),
+                            Rank.EIGHT: Move(0, 'hit', ''), Rank.NINE: Move(0, 'hit', ''),
+                            Rank.TEN: Move(0, 'hit', ''), Rank.JACK: Move(0, 'hit', ''),
+                            Rank.QUEEN: Move(0, 'hit', ''), Rank.KING: Move(0, 'hit', ''),
+                            Rank.ACE: Move(0, 'hit', '')
+                        }
+                        ),
+            PlayerCards({Rank.FIVE}, 0,
+                        {
+                            Rank.TWO: Move(0, 'double', ''), Rank.THREE: Move(0, 'double', ''), 
+                            Rank.FOUR: Move(0, 'double', ''), Rank.FIVE: Move(0, 'double', ''), 
+                            Rank.SIX: Move(0, 'double', ''), Rank.SEVEN: Move(0, 'double', ''),
+                            Rank.EIGHT: Move(-5, 'double', 'hit'), Rank.NINE: Move(-2, 'double', 'hit'),
+                            Rank.TEN: Move(4, 'hit', 'double'), Rank.JACK: Move(4, 'hit', 'double'),
+                            Rank.QUEEN: Move(4, 'hit', 'double'), Rank.KING: Move(4, 'hit', 'double'),
+                            Rank.ACE: Move(1, 'hit', 'double')
+                        }
+                        ),
+            PlayerCards({Rank.SIX}, 0,
+                        {
+                            Rank.TWO: Move(-2, 'split', 'hit'), Rank.THREE: Move(-2, 'split', 'hit'), 
+                            Rank.FOUR: Move(-5, 'split', 'hit'), Rank.FIVE: Move(0, 'split', ''), 
+                            Rank.SIX: Move(0, 'split', ''), Rank.SEVEN: Move(0, 'hit', ''),
+                            Rank.EIGHT: Move(0, 'hit', ''), Rank.NINE: Move(0, 'hit', ''),
+                            Rank.TEN: Move(0, 'hit', ''), Rank.JACK: Move(0, 'hit', ''),
+                            Rank.QUEEN: Move(0, 'hit', ''), Rank.KING: Move(0, 'hit', ''),
+                            Rank.ACE: Move(0, 'hit', '')
+                        }
+                        ),
+            PlayerCards({Rank.SEVEN}, 0,
+                        {
+                            Rank.TWO: Move(0, 'split', ''), Rank.THREE: Move(0, 'split', ''), 
+                            Rank.FOUR: Move(0, 'split', ''), Rank.FIVE: Move(0, 'split', ''), 
+                            Rank.SIX: Move(0, 'split', ''), Rank.SEVEN: Move(0, 'split', ''),
+                            Rank.EIGHT: Move(5, 'hit', 'double'), Rank.NINE: Move(0, 'hit', ''),
+                            Rank.TEN: Move(0, 'hit', ''), Rank.JACK: Move(0, 'hit', ''),
+                            Rank.QUEEN: Move(0, 'hit', ''), Rank.KING: Move(0, 'hit', ''),
+                            Rank.ACE: Move(0, 'hit', '')
+                        }
+                        ),
+            PlayerCards({Rank.EIGHT}, 0,
+                        {
+                            Rank.TWO: Move(0, 'split', ''), Rank.THREE: Move(0, 'split', ''), 
+                            Rank.FOUR: Move(0, 'split', ''), Rank.FIVE: Move(0, 'split', ''), 
+                            Rank.SIX: Move(0, 'split', ''), Rank.SEVEN: Move(0, 'split', ''),
+                            Rank.EIGHT: Move(0, 'split', ''), Rank.NINE: Move(0, 'split', ''),
+                            Rank.TEN: Move(0, 'split', ''), Rank.JACK: Move(0, 'split', ''),
+                            Rank.QUEEN: Move(0, 'split', ''), Rank.KING: Move(0, 'split', ''),
+                            Rank.ACE: Move(0, 'split', '')
+                        }
+                        ),
+            PlayerCards({Rank.NINE}, 0,
+                        {
+                            Rank.TWO: Move(-3, 'split', 'hit'), Rank.THREE: Move(-4, 'hit', ''), 
+                            Rank.FOUR: Move(-6, 'split', 'hit'), Rank.FIVE: Move(0, 'split', ''), 
+                            Rank.SIX: Move(0, 'split', ''), Rank.SEVEN: Move(0, 'stand', ''),
+                            Rank.EIGHT: Move(0, 'split', ''), Rank.NINE: Move(0, 'split', ''),
+                            Rank.TEN: Move(0, 'stand', ''), Rank.JACK: Move(0, 'stand', ''),
+                            Rank.QUEEN: Move(0, 'stand', ''), Rank.KING: Move(0, 'stand', ''),
+                            Rank.ACE: Move(0, 'stand', '')
+                        }
+                        ),
+            PlayerCards({Rank.TEN}, 0,
+                        {
+                            Rank.TWO: Move(0, 'stand', ''), Rank.THREE: Move(0, 'stand', ''), 
+                            Rank.FOUR: Move(6, 'stand', 'split'), Rank.FIVE: Move(5, 'stand', 'split'), 
+                            Rank.SIX: Move(4, 'stand', 'split'), Rank.SEVEN: Move(0, 'stand', ''),
+                            Rank.EIGHT: Move(0, 'stand', ''), Rank.NINE: Move(0, 'stand', ''),
+                            Rank.TEN: Move(0, 'stand', ''), Rank.JACK: Move(0, 'stand', ''),
+                            Rank.QUEEN: Move(0, 'stand', ''), Rank.KING: Move(0, 'stand', ''),
+                            Rank.ACE: Move(0, 'stand', '')
+                        }
+                        ),
         ]
         self.moves = moves
