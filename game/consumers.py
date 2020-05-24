@@ -7,6 +7,7 @@ from .casinogames.croupier import Croupier
 from .casinogames.player import Player
 from .casinogames.blackjack.blackjack_croupier import BlackjackCroupier
 from .casinogames.blackjack.blackjack_player import BlackjackPlayer
+from .casinogames.blackjack.blackjack_bot import BlackjackBot
 
 current_games = defaultdict(int)
 
@@ -40,6 +41,7 @@ class GameRoomConsumer(JsonWebsocketConsumer):
 
         player = BlackjackPlayer(self.user.username, self.channel_name)
         self.croupier.add_player(player)
+        self.croupier.add_player(BlackjackBot(self.user.username + 'bot', self.channel_name + 'b', 2, self.croupier))
 
         current_games[self.room_name] += 1
 

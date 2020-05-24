@@ -1,6 +1,7 @@
 from ..croupier import Croupier
 from ..deck import Hand, Rank
 
+
 class BlackjackCroupier(Croupier):
 
     def init_game(self):
@@ -82,6 +83,7 @@ class BlackjackCroupier(Croupier):
                     return
                 print(f'{player.name} bets {move["value"]}')
                 self.pot += move['value']
+                print(player.balance)
                 player.balance -= move['value']
                 self.next_turn()
             else:
@@ -89,6 +91,7 @@ class BlackjackCroupier(Croupier):
 
             if self.players.index(player) == len(self.players) - 1:
                 self.start_game()
+            self.notify_all()
 
 
         def handle_move(player, move):
