@@ -31,7 +31,7 @@ def index(request):
 
 @login_required(login_url="/login")
 def room(request, room_name):
-    if room_name not in consumers.current_games:
+    if room_name not in consumers.current_games or consumers.current_games[room_name]['pending'] == True:
         return redirect('index')
 
     return render(

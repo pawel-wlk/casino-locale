@@ -11,7 +11,8 @@ from .casinogames.blackjack.blackjack_player import BlackjackPlayer
 def defaultRoom():
     return {
         'room_type': "",
-        'player_count': 0
+        'player_count': 0,
+        'pending': False,
     }
 
 current_games = {}
