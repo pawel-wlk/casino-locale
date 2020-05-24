@@ -35,9 +35,9 @@ export class Card /* implements GameObject */ {
 
     inBoundary(pointerEvent, engineConfig) {
         return pointerEvent.layerX >= this.position.x &&
-            pointerEvent.layerX <= this.position.x + engineConfig.cardWidth * engineConfig.width &&
+            pointerEvent.layerX <= this.position.x + engineConfig.cardWidth * engineConfig.base &&
             pointerEvent.layerY >= this.position.y &&
-            pointerEvent.layerY <= this.position.y + engineConfig.cardHeight * engineConfig.height;
+            pointerEvent.layerY <= this.position.y + engineConfig.cardHeight * engineConfig.base;
     }
 
     drawMe(context, engineConfig) {
@@ -45,14 +45,14 @@ export class Card /* implements GameObject */ {
         context.fillRect(
             this.position.x,
             this.position.y,
-            engineConfig.cardWidth * engineConfig.width,
-            engineConfig.cardHeight * engineConfig.height
+            engineConfig.cardWidth * engineConfig.base,
+            engineConfig.cardHeight * engineConfig.base
         );
         context.textBaseline = 'top';
         context.fillStyle = this.color.color;
-        context.font = `${engineConfig.cardHeight * engineConfig.height / 4}px monospace`;
+        context.font = `${engineConfig.cardHeight * engineConfig.base / 4}px monospace`;
         context.fillText(`${this.rank}${this.color.symbol}`,
-            this.position.x + engineConfig.cardHeight * engineConfig.height / 32,
-            this.position.y + engineConfig.cardWidth * engineConfig.width / 32);
+            this.position.x + engineConfig.cardHeight * engineConfig.base / 32,
+            this.position.y + engineConfig.cardWidth * engineConfig.base / 32);
     }
 }

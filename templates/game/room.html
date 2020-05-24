@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% block head %}
+{% load static %}
+<script src="{% static "js/game/index.js" %}" type="module"></script>
+{% endblock head %}
 
 {% block title %}
 <title>Game room</title>
@@ -9,7 +13,9 @@
     <h1>
         You're in room {{ room_name }}
     </h1>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+    <canvas>
+
+    </canvas>
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
 
@@ -19,7 +25,6 @@
     <input id="split" type="button" value="Split">
     <input id="double" type="button" value="Double">
     <input id="bet" type="button" value="Bet">
-
 
     {{ room_name|json_script:"room-name" }}
     <script>
@@ -33,10 +38,11 @@
             + '/'
         );
 
+        chatSocket.addEventListener('message', m => console.log(JSON.parse(m)));
+
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            console.log(data)
-            document.querySelector('#chat-log').value += ('croupier: ' + data.message.croupier.sum + '; ' + data.message.players.map(p => p.player + ': ' + p.sum).join(', ') + '\n');
+            console.log(data);
         };
 
         chatSocket.onclose = function (e) {

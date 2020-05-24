@@ -28,7 +28,7 @@ export class Token {
     }
 
     inBoundary(pointerEvent, engineConfig) {
-        return Math.sqrt((pointerEvent.layerX - this.position.x) ** 2 + (pointerEvent.layerY - this.position.y) ** 2) < engineConfig.tokenRadius * engineConfig.width;
+        return Math.sqrt((pointerEvent.layerX - this.position.x) ** 2 + (pointerEvent.layerY - this.position.y) ** 2) < engineConfig.tokenRadius * engineConfig.base;
     }
 
     drawMe(context, engineConfig) {
@@ -37,7 +37,7 @@ export class Token {
         context.arc(
             this.position.x,
             this.position.y,
-            engineConfig.tokenRadius * engineConfig.width,
+            engineConfig.tokenRadius * engineConfig.base,
             0,
             2 * Math.PI
         );
@@ -47,7 +47,7 @@ export class Token {
         context.arc(
             this.position.x,
             this.position.y,
-            0.8 * engineConfig.tokenRadius * engineConfig.width,
+            0.8 * engineConfig.tokenRadius * engineConfig.base,
             0,
             2 * Math.PI
         );

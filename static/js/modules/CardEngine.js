@@ -7,20 +7,18 @@ export const defaultEngineConfig = {
 
 export class CardEngine {
     constructor(canvasElement, engineConfig = defaultEngineConfig) {
-        this.config = {
-            ...engineConfig,
-            height: canvasElement.height,
-            width: canvasElement.width,
-            cardHeight: engineConfig.cardHeight / (canvasElement.height / canvasElement.width)
-        };
         this.ctx = canvasElement.getContext('2d');
-        this.objects = [];
+        this.config = engineConfig;
         this.animations = [];
+        this.objects = [];
         this.dragged = {
             object: null,
             lastX: 0,
             lastY: 0,
         };
+
+        window.addEventListener('resize', () => this.resizeCanvas(canvasElement));
+        this.resizeCanvas(canvasElement);
 
         canvasElement.addEventListener('pointermove', event => {
             if (this.dragged.object) {
@@ -85,5 +83,11 @@ export class CardEngine {
             return animation.startTime + animation.duration > time;
         });
         this.objects.forEach(object => object.drawMe(this.ctx, this.config));
+    }
+
+    resizeCanvas(canvasElement) {
+        this.config.width = (canvasElement.width = canvasElement.clientWidth);
+        this.config.height = (canvasElement.height = canvasElement.clientHeight);
+        this.config.base = Math.max(canvasElement.width, canvasElement.height);
     }
 }
