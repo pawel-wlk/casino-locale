@@ -1,3 +1,20 @@
+export const defaultRanks = {
+    ONE: '1',
+    TWO: '2',
+    THREE: '3',
+    FOUR: '4',
+    FIVE: '5',
+    SIX: '6',
+    SEVEN: '7',
+    EIGHT: '8',
+    NINE: '9',
+    TEN: '10',
+    JACK: 'J',
+    QUEEN: 'Q',
+    KING: 'K',
+    ACE: 'A'
+};
+
 export class CardColor {
     constructor(displayName, symbol, color) {
         this.displayName = displayName;
@@ -7,10 +24,10 @@ export class CardColor {
 }
 
 export const defaultColors = {
-    clubs: new CardColor('Clubs', '♣', '#2A2D34'),
-    spades: new CardColor('Spades', '♠', "#2A2D34"),
-    hearts: new CardColor('Hearts', '♥', '#B10F2E'),
-    diamons: new CardColor('Diamons', '♦', '#B10F2E')
+    CLUBS: new CardColor('Clubs', '♣', '#2A2D34'),
+    SPADES: new CardColor('Spades', '♠', "#2A2D34"),
+    HEARTS: new CardColor('Hearts', '♥', '#B10F2E'),
+    DIAMONDS: new CardColor('Diamons', '♦', '#B10F2E')
 };
 
 export const defaultCardConfig = {

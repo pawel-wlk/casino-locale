@@ -8,7 +8,10 @@ export const defaultEngineConfig = {
 export class CardEngine {
     constructor(canvasElement, engineConfig = defaultEngineConfig) {
         this.ctx = canvasElement.getContext('2d');
-        this.config = engineConfig;
+        this.config = {
+            ...engineConfig,
+            time: 0
+        };
         this.animations = [];
         this.objects = [];
         this.dragged = {
@@ -71,6 +74,7 @@ export class CardEngine {
     }
 
     draw(time) {
+        this.config.time = time;
         this.ctx.clearRect(0, 0, this.config.width, this.config.height);
         this.animations = this.animations.filter(animation => {
             if (animation.startTime <= time && time - animation.startTime <= animation.duration) {

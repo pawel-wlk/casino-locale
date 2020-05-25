@@ -13,7 +13,7 @@
     <h1>
         You're in room {{ room_name }}
     </h1>
-    <canvas>
+    <canvas height="600">
 
     </canvas>
     <input id="chat-message-input" type="text" size="100"><br>
@@ -27,90 +27,5 @@
     <input id="bet" type="button" value="Bet">
 
     {{ room_name|json_script:"room-name" }}
-    <script>
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
-
-        const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/room/'
-            + roomName
-            + '/'
-        );
-
-        chatSocket.addEventListener('message', m => console.log(JSON.parse(m)));
-
-        chatSocket.onmessage = function (e) {
-            const data = JSON.parse(e.data);
-            console.log(data);
-        };
-
-        chatSocket.onclose = function (e) {
-            console.error('Chat socket closed unexpectedly');
-        };
-
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function (e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
-
-        document.querySelector('#chat-message-submit').onclick = function (e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message,
-                'type': 'not_move'
-            }));
-            messageInputDom.value = '';
-        };
-
-        document.querySelector('#hit').onclick = function(e) {
-            chatSocket.send(JSON.stringify({
-                'type': 'move',
-                'message': { 'action': 'hit' }
-            }))
-        }
-
-        document.querySelector('#stand').onclick = function(e) {
-            chatSocket.send(JSON.stringify({
-                'type': 'move',
-                'message': { 'action': 'stand' }
-            }))
-        }
-
-        document.querySelector('#ready').onclick = function(e) {
-            chatSocket.send(JSON.stringify({
-                'type': 'init',
-                'message': { 'action': 'ready' }
-            }))
-        }
-
-        document.querySelector('#split').onclick = function(e) {
-            chatSocket.send(JSON.stringify({
-                'type': 'move',
-                'message': { 'action': 'split' }
-            }))
-        }
-        
-        document.querySelector('#double').onclick = function(e) {
-            chatSocket.send(JSON.stringify({
-                'type': 'move',
-                'message': { 'action': 'double' }
-            }))
-        }
-
-
-        document.querySelector('#bet').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'type': 'move',
-                'message': { 'action': 'bet', 'value': parseInt(message) }
-            }))
-        }
-
-    </script>
 </div>
 {% endblock content%}
