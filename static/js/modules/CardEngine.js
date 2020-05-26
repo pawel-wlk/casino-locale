@@ -92,6 +92,6 @@ export class CardEngine {
     resizeCanvas(canvasElement) {
         this.config.width = (canvasElement.width = canvasElement.clientWidth);
         this.config.height = (canvasElement.height = canvasElement.clientHeight);
-        this.config.base = Math.max(canvasElement.width, canvasElement.height);
+        this.config.base = Math.min(canvasElement.width, canvasElement.height);
     }
 }

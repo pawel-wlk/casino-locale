@@ -19,96 +19,40 @@ import {
 
 window.addEventListener('load', () => {
     const roomName = JSON.parse(document.getElementById('room-name').textContent);
+    const gameSocket = new WebSocket(`ws://${window.location.host}/ws/room/${roomName}/`);
 
-    const chatSocket = new WebSocket(
-        'ws://' +
-        window.location.host +
-        '/ws/room/' +
-        roomName +
-        '/'
-    );
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.addEventListener('click', event => {
+            const payload = {
+                type: event.target.dataset['action'] === 'ready' ? 'init' : 'move',
+                message: {
+                    action: event.target.dataset['action']
+                }
+            };
 
-    chatSocket.onclose = function (e) {
-        console.error('Chat socket closed unexpectedly');
-    };
-
-    document.querySelector('#chat-message-input').focus();
-    document.querySelector('#chat-message-input').onkeyup = function (e) {
-        if (e.keyCode === 13) { // enter, return
-            document.querySelector('#chat-message-submit').click();
-        }
-    };
-
-    document.querySelector('#chat-message-submit').onclick = function (e) {
-        const messageInputDom = document.querySelector('#chat-message-input');
-        const message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'message': message,
-            'type': 'not_move'
-        }));
-        messageInputDom.value = '';
-    };
-
-    document.querySelector('#hit').onclick = function (e) {
-        chatSocket.send(JSON.stringify({
-            'type': 'move',
-            'message': {
-                'action': 'hit'
+            if (event.target.dataset['action'] === 'bet') {
+                payload.message.value = Number.parseInt(document.getElementById('bet-value').value);
             }
-        }))
-    }
 
-    document.querySelector('#stand').onclick = function (e) {
-        chatSocket.send(JSON.stringify({
-            'type': 'move',
-            'message': {
-                'action': 'stand'
-            }
-        }))
-    }
+            gameSocket.send(JSON.stringify(payload));
+        });
+    });
 
-    document.querySelector('#ready').onclick = function (e) {
-        chatSocket.send(JSON.stringify({
-            'type': 'init',
-            'message': {
-                'action': 'ready'
-            }
-        }))
-    }
+    gameSocket.addEventListener('message', message => {
+        const availableMoves = JSON.parse(message.data)
+            .message
+            .players[0]
+            // .find(p => p.player === 'TODO')
+            .available_moves;
 
-    document.querySelector('#split').onclick = function (e) {
-        chatSocket.send(JSON.stringify({
-            'type': 'move',
-            'message': {
-                'action': 'split'
-            }
-        }))
-    }
-
-    document.querySelector('#double').onclick = function (e) {
-        chatSocket.send(JSON.stringify({
-            'type': 'move',
-            'message': {
-                'action': 'double'
-            }
-        }))
-    }
-
-
-    document.querySelector('#bet').onclick = function (e) {
-        const messageInputDom = document.querySelector('#chat-message-input');
-        const message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'type': 'move',
-            'message': {
-                'action': 'bet',
-                'value': parseInt(message)
-            }
-        }))
-    }
+        inputs.forEach(input => {
+            input.disabled = !availableMoves.includes(input.dataset['action']);
+        })
+    });
 
     const engine = new CardEngine(document.querySelector('canvas'));
-    const blackjack = new Blackjack(chatSocket, engine);
+    const blackjack = new Blackjack(gameSocket, engine);
 
     function draw(time) {
         requestAnimationFrame(draw);

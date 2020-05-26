@@ -1,0 +1,31 @@
+main {
+    padding-top: var(--base-distance);
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
+}
+
+main>section {
+    padding: var(--base-distance);
+    display: flex;
+    flex-flow: column;
+    flex-grow: 1;
+}
+
+main>section>nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--base-distance);
+}
+
+main>section>nav>div {
+    display: flex;
+}
+
+main>section>canvas {
+    box-shadow: 0px 10px 22px 0px rgba(0, 0, 0, 0.2);
+    margin-bottom: var(--base-distance);
+    margin-top: var(--base-distance);
+    width: 100%;
+    height: 100%;
+}

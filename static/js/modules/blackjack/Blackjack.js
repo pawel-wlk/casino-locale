@@ -19,7 +19,7 @@ export const defaultConfig = {
     animationDuration: 500,
     deckPosition: {
         x: 1 / 2,
-        y: -1
+        y: -2
     }
 };
 
@@ -31,7 +31,8 @@ export class Blackjack {
             deckPosition: {
                 x: (blackjackConfig.deckPosition.x - cardEngine.config.cardWidth / 2) * cardEngine.config.base,
                 y: blackjackConfig.deckPosition.y * cardEngine.config.cardHeight * cardEngine.config.base
-            }
+            },
+            maxHandWidth: this.cardEngine.config.base * this.cardEngine.config.cardWidth * 3
         };
 
         this.animationScheduler = new AnimationScheduler(this.cardEngine);
@@ -41,8 +42,8 @@ export class Blackjack {
         ];
         this.players = [];
         this.croupier = new BlackjackPlayer('', {
-            x: 300,
-            y: 100
+            x: this.cardEngine.config.width / 2,
+            y: this.cardEngine.config.cardHeight * this.cardEngine.config.base / 2
         });
 
         websocket.addEventListener('message', m => {
@@ -75,9 +76,9 @@ export class Blackjack {
         let player = this.players.find(player => player.id === id);
         if (!player) {
             player = new BlackjackPlayer(id, {
-                x: this.cardEngine.config.base * this.cardEngine.config.cardWidth * 3 * 2 * (this.players.length + 0.5),
+                x: this.config.maxHandWidth * (this.players.length + 1),
                 y: 300
-            })
+            });
             this.players.push(player); // TODO: proper locations
         }
 
@@ -87,8 +88,7 @@ export class Blackjack {
     }
 
     offsetCardLocation(player, handIndex) {
-        const maxHandWidth = this.cardEngine.config.base * this.cardEngine.config.cardWidth * 3;
-        const baseX = player.location.x + (handIndex - player.hands.length / 2) * maxHandWidth;
+        const baseX = player.location.x + (handIndex - player.hands.length / 2) * this.config.maxHandWidth;
 
         return {
             x: baseX + this.cardEngine.config.base * this.cardEngine.config.cardWidth / 2 * (player.hands[handIndex].length - 1),
@@ -108,10 +108,8 @@ export class Blackjack {
             player.hands.push([card]); // add a new hand with the card
         } else { // card in existing hand - do nothing
             if (handHoldingCard) return;
+            if (player.hands[handIndex].push(card));
         }
-
-        if (player.hands[handIndex]) player.hands[handIndex].push(card);
-        else player.hands[handIndex] = [card];
 
         console.log('Updating card...', card, player, handIndex);
 

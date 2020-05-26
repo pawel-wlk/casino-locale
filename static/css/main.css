@@ -57,13 +57,17 @@ input {
     padding: var(--base-distance);
 }
 
-.button:hover {
+.button:not(:disabled):hover {
     background-color: var(--main-color-light);
     color: var(--secondary-color);
 }
 
 .button:active {
     transform: scale(0.95);
+}
+
+.button:disabled {
+    background-color: var(--main-color-light);
 }
 
 /* base.html specific */
