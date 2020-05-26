@@ -48,7 +48,7 @@ export class CardEngine {
         canvasElement.addEventListener('pointerout', () => this.dragged.object = null);
         canvasElement.addEventListener('mouseup', () => {
             this.dragged.object = null;
-            canvasElement.style.cursor = 'grab';
+            canvasElement.style.cursor = 'auto';
         });
     }
 

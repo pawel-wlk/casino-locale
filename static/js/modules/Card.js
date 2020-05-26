@@ -59,17 +59,25 @@ export class Card /* implements GameObject */ {
 
     drawMe(context, engineConfig) {
         context.fillStyle = this.config.selected ? this.config.selectedBackground : this.config.bakcground;
+        context.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        context.shadowBlur = 10;
         context.fillRect(
             this.position.x,
             this.position.y,
             engineConfig.cardWidth * engineConfig.base,
             engineConfig.cardHeight * engineConfig.base
         );
+
+        context.shadowColor = 'transparent';
         context.textBaseline = 'top';
         context.fillStyle = this.color.color;
         context.font = `${engineConfig.cardHeight * engineConfig.base / 4}px monospace`;
         context.fillText(`${this.rank}${this.color.symbol}`,
             this.position.x + engineConfig.cardHeight * engineConfig.base / 32,
             this.position.y + engineConfig.cardWidth * engineConfig.base / 32);
+    }
+
+    compareWith(card) {
+        return this.rank === card.rank && this.color === card.color;
     }
 }

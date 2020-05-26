@@ -18,18 +18,27 @@ import {
 export const defaultConfig = {
     animationDuration: 500,
     deckPosition: {
-        x: 0,
-        y: 0
+        x: 1 / 2,
+        y: -1
     }
 };
 
 export class Blackjack {
     constructor(websocket, cardEngine, blackjackConfig = defaultConfig) {
         this.cardEngine = cardEngine;
-        this.config = blackjackConfig;
+        this.config = {
+            ...blackjackConfig,
+            deckPosition: {
+                x: (blackjackConfig.deckPosition.x - cardEngine.config.cardWidth / 2) * cardEngine.config.base,
+                y: blackjackConfig.deckPosition.y * cardEngine.config.cardHeight * cardEngine.config.base
+            }
+        };
 
-        this.deck = new CardDeck(true);
         this.animationScheduler = new AnimationScheduler(this.cardEngine);
+        this.decks = [
+            new CardDeck(true, this.config.deckPosition),
+            new CardDeck(true, this.config.deckPosition)
+        ];
         this.players = [];
         this.croupier = new BlackjackPlayer('', {
             x: 300,
@@ -51,8 +60,13 @@ export class Blackjack {
 
         data.message.players.forEach(player => {
             const playerObject = this.updatePlayer(player.player);
-            player.hand.forEach(cardInfo => {
-                this.updatePlayerCard(cardInfo, playerObject, 0); //TODO: resolve hand issues
+            // player.hand.forEach((hand, handIndex) => { // new version
+            //     hand.forEach(cardInfo => {
+            //         this.updatePlayerCard(cardInfo, playerObject, handIndex);
+            //     });
+            // });
+            player.hand.forEach(cardInfo => { // old version
+                this.updatePlayerCard(cardInfo, playerObject, 0);
             });
         });
     }
@@ -61,7 +75,7 @@ export class Blackjack {
         let player = this.players.find(player => player.id === id);
         if (!player) {
             player = new BlackjackPlayer(id, {
-                x: 300,
+                x: this.cardEngine.config.base * this.cardEngine.config.cardWidth * 3 * 2 * (this.players.length + 0.5),
                 y: 300
             })
             this.players.push(player); // TODO: proper locations
@@ -72,31 +86,44 @@ export class Blackjack {
         return player;
     }
 
-    offsetCardLocation(baseLocation, cardNumber) {
+    offsetCardLocation(player, handIndex) {
+        const maxHandWidth = this.cardEngine.config.base * this.cardEngine.config.cardWidth * 3;
+        const baseX = player.location.x + (handIndex - player.hands.length / 2) * maxHandWidth;
+
         return {
-            x: baseLocation.x + this.cardEngine.config.base * this.cardEngine.config.cardWidth / 2 * (cardNumber - 1),
-            y: baseLocation.y + this.cardEngine.config.base * this.cardEngine.config.cardWidth / 2 * (cardNumber - 1),
+            x: baseX + this.cardEngine.config.base * this.cardEngine.config.cardWidth / 2 * (player.hands[handIndex].length - 1),
+            y: player.location.y + this.cardEngine.config.base * this.cardEngine.config.cardWidth / 2 * (player.hands[handIndex].length - 1),
         };
     }
 
-    updatePlayerCard(cardInfo, player, hand) {
-        const card = this.deck.getCard(cardInfo);
-        if (player.hands.some(hand => hand.includes(card))) return;
+    updatePlayerCard(cardInfo, player, handIndex) {
+        const cards = this.decks.map(deck => deck.getCard(cardInfo));
+        const card = cards[0];
 
-        if (player.hands[hand]) player.hands[hand].push(card);
-        else player.hands[hand] = [card];
+        const handHoldingCard = player.hands.find(hand => hand.includes(card));
+        if (player.hands.length === 0) { // special case for none cards
+            player.hands.push([card]);
+        } else if (handIndex > player.hands.length - 1) { // card in a new hand - was splitted
+            handHoldingCard.splice(handHoldingCard.indexOf(card), 1); // remove card from the hand
+            player.hands.push([card]); // add a new hand with the card
+        } else { // card in existing hand - do nothing
+            if (handHoldingCard) return;
+        }
 
-        console.log('Updating card...', card, player, hand);
+        if (player.hands[handIndex]) player.hands[handIndex].push(card);
+        else player.hands[handIndex] = [card];
+
+        console.log('Updating card...', card, player, handIndex);
 
         this.cardEngine.objects.push(card);
-        this.animationScheduler.animateWith(
+        this.animationScheduler.animateAfter(
             new Animation(
                 0,
                 this.config.animationDuration,
                 createDefaultCallback.position(
                     card,
-                    this.config.deckPosition,
-                    this.offsetCardLocation(player.location, player.hands[hand].length)
+                    card.position,
+                    this.offsetCardLocation(player, handIndex)
                 )
             )
         );
