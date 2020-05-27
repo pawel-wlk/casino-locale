@@ -19,6 +19,8 @@ import {
 
 window.addEventListener('load', () => {
     const roomName = JSON.parse(document.getElementById('room-name').textContent);
+    const playerList = document.getElementById('player-list');
+    const croupierSum = document.getElementById('croupier-sum');
     const gameSocket = new WebSocket(`ws://${window.location.host}/ws/room/${roomName}/`);
 
     const inputs = document.querySelectorAll('input');
@@ -40,15 +42,29 @@ window.addEventListener('load', () => {
     });
 
     gameSocket.addEventListener('message', message => {
-        const availableMoves = JSON.parse(message.data)
-            .message
-            .players[0]
-            // .find(p => p.player === 'TODO')
-            .available_moves;
+        const data = JSON.parse(message.data); // parse data
 
+        const availableMoves = data.message.players /*.find(p => p.player === 'TODO')*/ [0].available_moves; // update actions
         inputs.forEach(input => {
             input.disabled = !availableMoves.includes(input.dataset['action']);
-        })
+        });
+
+        croupierSum.textContent = data.message.croupier.sum; // update croupier text
+
+        while (playerList.firstChild) playerList.removeChild(playerList.firstChild); // update players table
+        data.message.players.forEach(player => {
+            const row = document.createElement('tr');
+            const name = document.createElement('td');
+            const sum = document.createElement('td');
+            const balance = document.createElement('td');
+
+            name.textContent = player.player;
+            sum.textContent = player.sum;
+            balance.textContent = player.balance;
+
+            row.append(name, sum, balance);
+            playerList.append(row);
+        });
     });
 
     const engine = new CardEngine(document.querySelector('canvas'));

@@ -10,23 +10,37 @@
 {% endblock title %}
 
 {% block content %}
-<h1>
-    You're in room {{ room_name }}
-</h1>
-<section>
-    <canvas></canvas>
-    <nav>
-        <input class="button" data-action="ready" type="button" value="Ready">
-        <input disabled class="button" data-action="hit" type="button" value="Hit">
-        <input disabled class="button" data-action="stand" type="button" value="Stand">
-        <input disabled class="button" data-action="split" type="button" value="Split">
-        <input disabled class="button" data-action="double" type="button" value="Double">
-        <div>
-            <input disabled data-action="bet" id="bet-value" type="number">
-            <input disabled class="button" data-action="bet" type="button" value="Bet">
-        </div>
-    </nav>
-</section>
-
 {{ room_name|json_script:"room-name" }}
+<section>
+    <article>
+        <canvas></canvas>
+        <nav>
+            <input class="button" data-action="ready" type="button" value="Ready">
+            <input disabled class="button" data-action="hit" type="button" value="Hit">
+            <input disabled class="button" data-action="stand" type="button" value="Stand">
+            <input disabled class="button" data-action="split" type="button" value="Split">
+            <input disabled class="button" data-action="double" type="button" value="Double">
+            <div>
+                <input disabled data-action="bet" id="bet-value" type="number">
+                <input disabled class="button" data-action="bet" type="button" value="Bet">
+            </div>
+        </nav>
+    </article>
+    <article>
+        <h1>You're in room {{ room_name }}</h1>
+        <h1>Croupier sum: <em id="croupier-sum">0</em></h1>
+        <!-- todo make balance appear here -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Sum</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody id="player-list">
+            </tbody>
+        </table>
+    </article>
+</section>
 {% endblock content%}

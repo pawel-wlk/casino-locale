@@ -61,13 +61,10 @@ export class Blackjack {
 
         data.message.players.forEach(player => {
             const playerObject = this.updatePlayer(player.player);
-            // player.hand.forEach((hand, handIndex) => { // new version
-            //     hand.forEach(cardInfo => {
-            //         this.updatePlayerCard(cardInfo, playerObject, handIndex);
-            //     });
-            // });
-            player.hand.forEach(cardInfo => { // old version
-                this.updatePlayerCard(cardInfo, playerObject, 0);
+            player.hand.forEach((hand, handIndex) => { // new version
+                hand.forEach(cardInfo => {
+                    this.updatePlayerCard(cardInfo, playerObject, handIndex);
+                });
             });
         });
     }
