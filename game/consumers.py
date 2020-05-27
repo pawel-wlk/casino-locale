@@ -57,9 +57,10 @@ class GameRoomConsumer(JsonWebsocketConsumer):
         current_games[self.room_name]['player_count'] -= 1
 
         if current_games[self.room_name]['player_count'] == 0:
+            del self.croupier.instances[self.room_name]
             del current_games[self.room_name]
-
-        self.croupier.delete_player(self.channel_name)
+        else:
+            self.croupier.delete_player(self.channel_name)
         self.leave_room()
 
     # receive_json is before chat_message

@@ -28,11 +28,12 @@ class BlackjackCroupier(Croupier):
 
         data = {
             'player': player.name,
-            'hand': player.hand.get_as_dict(),
+            'hand': [player.first_hand.get_as_dict(), player.second_hand.get_as_dict()],
             'status': player.status,
             'sum': self.hand_sum(player.hand),
             'balance': player.balance,
-            'available_moves': player.available_moves
+            'available_moves': player.available_moves,
+            'splitted': player.splitted
         }
         return data
 
@@ -63,7 +64,6 @@ class BlackjackCroupier(Croupier):
         return hand_sum
 
 
-    # game_info idk how much should be sent
     def process_move(self, channel_name, move):
         # If players are not ready, do nothing
         if not self.is_ready():
@@ -97,8 +97,8 @@ class BlackjackCroupier(Croupier):
             if move['action'] == 'split':
                 if 'split' in player.available_moves:
                     player.splitted = True
-                    player.second_hand = player.first_hand[1]
-                    player.first_hand = player.first_hand[0]
+                    player.second_hand.cards = [player.first_hand.cards[1]]
+                    player.first_hand.cards = [player.first_hand.cards[0]]
                 else:
                     return
 
@@ -124,6 +124,8 @@ class BlackjackCroupier(Croupier):
                     else:
                         if self.hand_sum(player.first_hand) > 21:
                             player.status = 'lost'
+                        else:
+                            player.hand = player.first_hand
                         self.next_turn()
                 
             elif move['action'] == 'hit':
