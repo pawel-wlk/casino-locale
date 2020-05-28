@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from .deck import Deck, Card, Hand
 
-from ..consumers import current_games
+from ..models import current_games
 
 
 class Croupier:
