@@ -45,6 +45,9 @@ class Croupier:
         deleted_player = res[0]
         self.players.remove(deleted_player)
 
+        if len(self.players) == 0:
+            return
+
         if deleted_player.his_turn:
             self.next_turn()
 
