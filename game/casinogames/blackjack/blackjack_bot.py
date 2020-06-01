@@ -36,37 +36,35 @@ class BlackjackBot(BlackjackPlayer):
         self.ready = True
 
     def update(self, game_data):
-        print(game_data)
         self.strategy.update(game_data)
         if self.his_turn and game_data['game_status'] == 'betting':
             self.make_bet(game_data)
         elif self.his_turn and game_data['game_status'] == 'playing':
             self.make_move(game_data)
 
-
     def send(self, move):
         self.croupier.process_move(self.channel_name, move)
 
     def make_bet(self, game_data):
-        print('making bet')
-        move =  {'action': 'bet', 'value': 100}
+        move = {'action': 'bet', 'value': 100}
         self.send(move)
 
     def make_move(self, game_data):
-        print(self.strategy.curr_value, self.strategy.real_value)
-        croupier_hand = [Rank[c['rank']] for c in game_data['croupier']['hand']]
-        player = [p for p in game_data['players'] if p['player'] == self.name][0]
+        croupier_hand = [Rank[c['rank']]
+                         for c in game_data['croupier']['hand']]
+        player = [p for p in game_data['players']
+                  if p['player'] == self.name][0]
         player_hand = [Rank[c['rank']] for c in player['hand']]
         player_hand_sum = player['sum']
-        next_move = self.strategy.next_move(croupier_hand[0], player_hand, player_hand_sum)
-        print(next_move)
-        self.send({ 'action': next_move })
-        
+        next_move = self.strategy.next_move(
+            croupier_hand[0], player_hand, player_hand_sum)
+        self.send({'action': next_move})
 
 
 class Strategy:
     def update(self, game_data):
-        cards = [Rank[c['rank']] for player in game_data['players'] for c in player['hand']]
+        cards = [Rank[c['rank']] for player in game_data['players']
+                 for c in player['hand']]
         cards += [Rank[c['rank']] for c in game_data['croupier']['hand']]
 
         # If there aren't any seen cards, the game has just started
@@ -84,12 +82,12 @@ class Strategy:
                 self.curr_value -= 1
 
         self.cards_left -= len(cards)
-        decks_left = math.ceil((self.cards_left - 1) / 52) if self.cards_left // 52 > 0 else 1
+        decks_left = math.ceil((self.cards_left - 1) /
+                               52) if self.cards_left // 52 > 0 else 1
         self.real_value = self.curr_value / decks_left
         self.cards_seen = cards
 
     def next_move(self, croupier_card, player_hand, hand_sum):
-        print(croupier_card, player_hand, hand_sum, self.real_value)
         # First check if it is a pair or a hand with an ace
         if len(player_hand) == 2:
             hand = set(player_hand)
@@ -101,7 +99,7 @@ class Strategy:
         search_res = [row for row in self.moves if row.compare(hand_sum)]
         if len(search_res) > 0:
             return self.extract_move(search_res[0].moves[croupier_card])
-        
+
         return 'stand'
 
     def extract_move(self, move):
@@ -111,13 +109,12 @@ class Strategy:
 
         # Negative sign before the value means that every number smaller than it
         # should be accepted. Non-negative value means that every number greater than it
-        # should be accepted  
+        # should be accepted
         sign = math.copysign(1, move.value)
-        compare = lambda x: x >= move.value
+        def compare(x): return x >= move.value
         if sign < 0:
-            compare = lambda x: x <= move.value
+            def compare(x): return x <= move.value
 
-        print(move)
         if compare(self.real_value):
             return move.extra_move
         else:
