@@ -9,6 +9,9 @@ class PokerCroupier(Croupier):
     def __init__(self):
         super().__init__()
         self.round = 0
+        self.bet = BIG_BLIND
+        self.round_betted = False
+        self.pot = 0
 
     def init_game(self):
         # blind bet
@@ -41,7 +44,9 @@ class PokerCroupier(Croupier):
             "game_round": self.round,
             "turn": [p.name for p in self.players if p.his_turn == True],
             "pot": self.pot,
+            "bet": self.bet,
             "table_cards": self.table_cards.get_as_dict(),
+            "round_betted": self.round_betted
         }
         for p in self.players:
             game_data["player"] = self.get_player_data(p)
@@ -51,6 +56,19 @@ class PokerCroupier(Croupier):
         if self.status != "finished":
             player.calc_available_moves()
 
+        # nie mam pomysłu gdzie to zrobić, a tu to raczej być nie powinno xd
+        if self.round == 1:
+            if "bet" in player.available_moves:
+                player.available_moves.remove("bet")
+        elif self.round_betted:
+            for move in ["bet", "check"]:
+                if move in player.available_moves:
+                    player.available_moves.remove(move)
+        else:
+            for move in ["raise", "call"]:
+                if move in player.available_moves:
+                    player.available_moves.remove(move)
+            
         data = {
             "player": player.name,
             "hand": player.hand.get_as_dict(),
@@ -60,10 +78,44 @@ class PokerCroupier(Croupier):
         }
         return data
 
+    def get_turn(self):
+        for p in self.players:
+            if p.his_turn:
+                return p
+
+    def next_turn(self):
+        search_res = [i for i, p in enumerate(self.players) if p.his_turn]
+        if len(search_res) == 0:
+            for p in self.players:
+                if p.status != "fold":
+                    p.his_turn = True
+                    return
+
+        i = search_res[0]
+        self.players[i].his_turn = False
+        while self.players[(i+1) % len(self.players)].status == "fold":
+            i+=1
+        self.players[(i + 1) % len(self.players)].his_turn = True
+        print(self.players[(i + 1) % len(self.players)].name)
+
+
+    def next_turn_additional_round(self):
+        search_res = [i for i, p in enumerate(self.players) if (p.status != "fold" and p.balance != -self.bet)]
+        if len(search_res) == 0:
+            return
+        i = search_res[0]
+        self.players[i].his_turn = True
+
+    def last_player(self):
+        for p in self.players[::-1]:
+            if p.status != "fold":
+                return p
+
     def process_move(self, channel_name, move):
         # If players are not ready, do nothing
-        if not self.is_ready():
+        if not self.is_ready() or self.status == "finished":
             return
+
 
         i, p = [
             el for el in enumerate(self.players) if el[1].channel_name == channel_name
@@ -78,38 +130,44 @@ class PokerCroupier(Croupier):
 
             if move["action"] == "fold":
                 player.status = "fold"
-                self.next_turn()
 
             elif move["action"] == "bet":
                 if type(move["value"]) != int:
                     return
                 print(f'{player.name} bets {move["value"]}')
+                self.round_betted = True
                 self.pot += move["value"]
+                self.bet += move["value"]
                 player.balance -= move["value"]
-                self.next_turn()
 
             elif move["action"] == "call":
-                if player.status == "first_round":
-                    self.pot += BIG_BLIND
-                    player.balance -= BIG_BLIND
-                    self.next_turn()
-                if player.status == "playing":
+                if player.status == "additional_round":
+                    self.pot += (player.balance + self.bet)
+                    player.balance -= (player.balance + self.bet)
+                elif player.status == "first_round":
+                    if player.balance == -SMALL_BLIND:
+                        self.pot += SMALL_BLIND
+                        player.balance -= SMALL_BLIND
+                    else:
+                        self.pot += BIG_BLIND
+                        player.balance -= BIG_BLIND
+                elif player.status == "playing":
                     if (
                         player == self.players[0]
                         or self.players[self.players.index(player) - 1].status
                         == "playing"
                     ):
                         # tutaj powinien wyrównywać do obecnej stawki cokolwiek to znaczy
-                        self.pot += BIG_BLIND
-                        player.balance -= BIG_BLIND
-                        self.next_turn()
+                            # done - zakładając że player.balance w danej rozgrywce resetowany
+                        self.pot += (player.balance + self.bet)
+                        player.balance -= (player.balance + self.bet)
 
             elif move["action"] == "raise":
                 if player.status == "first_round":
                     self.pot += 2 * BIG_BLIND
+                    self.bet += 2 * BIG_BLIND
                     player.balance -= 2 * BIG_BLIND
-                    self.next_turn()
-                if (
+                elif (
                     player == self.players[0]
                     or self.players[self.players.index(player) - 1].status == "playing"
                 ):
@@ -118,8 +176,8 @@ class PokerCroupier(Croupier):
                         return
                     print(f'{player.name} bets {move["value"]}')
                     self.pot += move["value"]
-                    player.balance -= move["value"]
-                    self.next_turn()
+                    self.bet += move["value"]
+                    player.balance = -self.bet
 
             elif move["action"] == "check":
                 if (
@@ -127,21 +185,76 @@ class PokerCroupier(Croupier):
                     or self.players[self.players.index(player) - 1].status == "check"
                 ):
                     player.status = "check"
+
+            # self.notify_all()
+
+
+            if self.round == 1 and not self.status == "additional_round":
+                if self.players.index(player) == 0:
+                    if not all([(p.status == "fold" or -p.balance == self.bet) for p in self.players]):
+                        self.status = "additional_round"
+                        for p in [p for p in self.players if (p.status != "fold" and -p.balance != self.bet)]:
+                            p.status = "additional_round"
+                        for p in self.players:
+                            p.his_turn = False
+                        self.next_turn_additional_round()
+                        self.notify_all()
+                    else:
+                        self.start_game()
+                else:
                     self.next_turn()
-
-            self.notify_all()
-
-            if self.players.index(player) == len(self.players) - 1:
-                if self.round == 1:
-                    self.start_game()
-                elif self.round < 5 and self.round > 1:
-                    self.table_cards.add_cards(self.deck.get_cards(1))
-                    for p in self.players:
-                        p.status = "playing"
-                    self.status = "playing"
-                    self.round += 1
                     self.notify_all()
-                elif self.round == 5:
-                    pass
+            elif not self.status == "additional_round" and self.round > 1 and self.round < 5:
+                if player == self.last_player():
+                    if not all([(p.status == "fold" or -p.balance == self.bet) for p in self.players]):
+                        self.status = "additional_round"
+                        for p in [p for p in self.players if (p.status != "fold" and -p.balance != self.bet)]:
+                            p.status = "additional_round"
+                        for p in self.players:
+                            p.his_turn = False
+                        self.next_turn_additional_round()
+                        self.notify_all()
+                    else:
+                        self.round_betted = False
+                        self.table_cards.add_cards(self.deck.get_cards(1))
+                        for p in self.players:
+                            if p.status != "fold":
+                                p.status = "playing"
+                        self.status = "playing"
+                        self.round += 1
+                        self.next_turn()
+                        self.notify_all()
+                else:
+                    self.next_turn()
+                    self.notify_all()
+            elif self.status == "additional_round":
+                if all([(p.status == "fold" or -p.balance == self.bet) for p in self.players]):
+                    if self.round < 5:
+                        self.round_betted = False
+                        self.table_cards.add_cards(self.deck.get_cards(1))
+                        for p in self.players:
+                            if p.status != "fold":
+                                p.status = "playing"
+                                p.his_turn = False
+                        self.status = "playing"
+                        self.round += 1
+                        self.next_turn()
+                        self.notify_all()
+                else:
+                    self.next_turn_additional_round()
+                    self.notify_all()
+            else:
+                print("XD")
+            
+            if len([p for p in self.players if p.status != "fold"]) == 1:
+                won = [p for p in self.players if p.status != "fold"][0]
+                print(f"Player {won.name} wons {self.pot}")
+                self.status = "finished"
+                return
 
+            if self.round == 5 and player == self.last_player():
+                print("rozgrywka skończona")
+                return
+
+                        
         handle_move(p, move)

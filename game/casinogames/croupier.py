@@ -72,6 +72,7 @@ class Croupier:
         i = search_res[0]
         self.players[i].his_turn = False
         self.players[(i + 1) % len(self.players)].his_turn = True
+        print(self.players[(i + 1) % len(self.players)].name)
 
 
     @abstractmethod

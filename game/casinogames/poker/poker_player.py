@@ -24,8 +24,15 @@ class PokerPlayer(Player):
             self.available_moves = []
             return []
 
+
         if self.status == "fold":
             return []
+
+        if self.status == "additional_round":
+            self.available_moves = ["fold", "call"]
+            
+        elif self.status == "first_round":
+            self.available_moves = ["fold", "call", "raise"]
 
         elif self.status == "playing":
             self.available_moves = ["fold", "bet", "raise", "call", "check"]
