@@ -1,5 +1,7 @@
+import itertools
 from ..croupier import Croupier
 from ..deck import Hand, Rank
+from .winner_calc import convert, evaluate_hand, compare_hands
 
 SMALL_BLIND = 1
 BIG_BLIND = 2 * SMALL_BLIND
@@ -215,21 +217,25 @@ class PokerCroupier(Croupier):
                         self.next_turn_additional_round()
                         self.notify_all()
                     else:
-                        self.round_betted = False
-                        self.table_cards.add_cards(self.deck.get_cards(1))
-                        for p in self.players:
-                            if p.status != "fold":
-                                p.status = "playing"
-                        self.status = "playing"
-                        self.round += 1
-                        self.next_turn()
-                        self.notify_all()
+                        if self.round < 4:
+                            self.round_betted = False
+                            self.table_cards.add_cards(self.deck.get_cards(1))
+                            for p in self.players:
+                                if p.status != "fold":
+                                    p.status = "playing"
+                            self.status = "playing"
+                            self.round += 1
+                            self.next_turn()
+                            self.notify_all()
+                        else:
+                            self.round += 1
+                            self.notify_all()
                 else:
                     self.next_turn()
                     self.notify_all()
             elif self.status == "additional_round":
                 if all([(p.status == "fold" or -p.balance == self.bet) for p in self.players]):
-                    if self.round < 5:
+                    if self.round < 4:
                         self.round_betted = False
                         self.table_cards.add_cards(self.deck.get_cards(1))
                         for p in self.players:
@@ -239,6 +245,9 @@ class PokerCroupier(Croupier):
                         self.status = "playing"
                         self.round += 1
                         self.next_turn()
+                        self.notify_all()
+                    else:
+                        self.round += 1
                         self.notify_all()
                 else:
                     self.next_turn_additional_round()
@@ -252,7 +261,28 @@ class PokerCroupier(Croupier):
                 self.status = "finished"
                 return
 
-            if self.round == 5 and player == self.last_player():
+            if self.round == 5: # and player == self.last_player():
+                hands = []
+                for p in self.players:
+                    if p.status != "fold":
+                        cards = convert(p.hand.cards) + convert(self.table_cards.cards)
+                        best = 0
+                        for possibility in list(map(list, list(itertools.combinations(cards, 5)))):
+                            if evaluate_hand(possibility)[2] > best:
+                                best, h = evaluate_hand(possibility)[2], possibility
+                        hands.append((p, best, h))
+
+                best = max(hands, key=lambda x: x[1])
+                print(best)
+                winners = [(p, c) for (p, v, c) in hands if v == best[1]]
+                winner = winners[0]
+                if len(winners) > 1:
+                    for candidate in winners[1:]:
+                        if compare_hands(winner[1], candidate[1])[0] == 'right':
+                            winner = candidate
+                winner[0].status = "won"
+                winner[0].balance += self.pot
+                print(f"Player {winner[0].name} has won {self.pot} with {winner[1]}")
                 print("rozgrywka skończona")
                 return
 
