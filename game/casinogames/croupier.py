@@ -1,6 +1,8 @@
 from abc import abstractmethod
 from .deck import Deck, Card, Hand
 
+from ..models import current_games
+
 
 class Croupier:
     instances = {}
@@ -10,16 +12,17 @@ class Croupier:
         if room_name in Croupier.instances:
             return Croupier.instances[room_name]
 
-        Croupier.instances[room_name] = cls()
+        Croupier.instances[room_name] = cls(room_name, 2)
         return Croupier.instances[room_name]
 
     
-    def __init__(self):
+    def __init__(self, room_name, number_of_decks=1):
         self.players = []
-        self.deck = Deck()
+        self.deck = Deck(number_of_decks)
         self.table_cards = Hand()
         self.status = 'waiting'
         self.pot = 0
+        self.room_name = room_name
         # self.init_game()
 
 
@@ -42,6 +45,9 @@ class Croupier:
         deleted_player = res[0]
         self.players.remove(deleted_player)
 
+        if len(self.players) == 0:
+            return
+
         if deleted_player.his_turn:
             self.next_turn()
 
@@ -53,6 +59,7 @@ class Croupier:
 
         res[0].ready = True
         if res[0].status == 'waiting' and self.is_ready():
+            current_games[self.room_name]['pending'] == True
             self.init_game()
 
 
