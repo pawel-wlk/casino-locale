@@ -1,118 +1,46 @@
 {% extends "base.html" %}
+{% block head %}
+{% load static %}
+<script src="{% static "js/game/index.js" %}" type="module"></script>
+<link rel="stylesheet" href="{% static "css/room.css" %}">
+{% endblock head %}
 
 {% block title %}
 <title>Game room</title>
 {% endblock title %}
 
 {% block content %}
-<div class="game-room">
-    <h1>
-        You're in room {{ room_name }}
-    </h1>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
-    <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send">
-
-    <input id="ready" type="button" value="Ready">
-    <input id="hit" type="button" value="Hit">
-    <input id="stand" type="button" value="Stand">
-    <input id="split" type="button" value="Split">
-    <input id="double" type="button" value="Double">
-    <input id="bet" type="button" value="Bet">
-    <input id="add_bot" type="button" value="Add bot">
-
-
-    {{ room_name|json_script:"room-name" }}
-    <script>
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
-
-        const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/room/'
-            + roomName
-            + '/'
-        );
-
-        chatSocket.onmessage = function (e) {
-            const data = JSON.parse(e.data);
-            console.log(data)
-            document.querySelector('#chat-log').value += ('croupier: ' + data.message.croupier.sum + '; ' + data.message.players.map(p => p.player + ': ' + p.sum).join(', ') + '\n');
-        };
-
-        chatSocket.onclose = function (e) {
-            console.error('Chat socket closed unexpectedly');
-        };
-
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function (e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
-
-        document.querySelector('#chat-message-submit').onclick = function (e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message,
-                'type': 'not_move'
-            }));
-            messageInputDom.value = '';
-        };
-
-        document.querySelector('#hit').onclick = function(e) {
-            chatSocket.send(JSON.stringify({
-                'type': 'move',
-                'message': { 'action': 'hit' }
-            }))
-        }
-
-        document.querySelector('#stand').onclick = function(e) {
-            chatSocket.send(JSON.stringify({
-                'type': 'move',
-                'message': { 'action': 'stand' }
-            }))
-        }
-
-        document.querySelector('#ready').onclick = function(e) {
-            chatSocket.send(JSON.stringify({
-                'type': 'init',
-                'message': { 'action': 'ready' }
-            }))
-        }
-
-        document.querySelector('#split').onclick = function(e) {
-            chatSocket.send(JSON.stringify({
-                'type': 'move',
-                'message': { 'action': 'split' }
-            }))
-        }
-        
-        document.querySelector('#double').onclick = function(e) {
-            chatSocket.send(JSON.stringify({
-                'type': 'move',
-                'message': { 'action': 'double' }
-            }))
-        }
-
-
-        document.querySelector('#bet').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'type': 'move',
-                'message': { 'action': 'bet', 'value': parseInt(message) }
-            }))
-        }
-
-        document.querySelector('#add_bot').onclick = function(e) {
-            chatSocket.send(JSON.stringify({
-                'type': 'config',
-                'message': { 'action': 'add_bot' }
-            }))
-        }
-
-    </script>
-</div>
+{{ room_name|json_script:"room-name" }}
+<section>
+    <article>
+        <canvas></canvas>
+        <nav>
+            <input class="button" data-action="ready" type="button" value="Ready">
+            <input disabled class="button" data-action="hit" type="button" value="Hit">
+            <input disabled class="button" data-action="stand" type="button" value="Stand">
+            <input disabled class="button" data-action="split" type="button" value="Split">
+            <input disabled class="button" data-action="double" type="button" value="Double">
+            <div>
+                <input disabled data-action="bet" id="bet-value" type="number">
+                <input disabled class="button" data-action="bet" type="button" value="Bet">
+            </div>
+        </nav>
+    </article>
+    <article>
+        <h1>You're in room {{ room_name }}</h1>
+        <h1>Croupier sum: <em id="croupier-sum">0</em></h1>
+        <!-- todo make balance appear here -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Sum</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody id="player-list">
+            </tbody>
+        </table>
+    </article>
+</section>
 {% endblock content%}

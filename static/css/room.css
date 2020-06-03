@@ -1,0 +1,50 @@
+main {
+    padding-top: var(--base-distance);
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
+}
+
+main>section {
+    display: flex;
+    flex-grow: 1;
+}
+
+main>section>article {
+    padding: var(--base-distance);
+    display: flex;
+    flex-flow: column;
+    flex-grow: 1;
+}
+
+main>section>article>h1,
+main>section>article>table {
+    padding: var(--base-distance);
+    margin-bottom: var(--base-distance);
+    box-shadow: 0px 10px 22px 0px rgba(0, 0, 0, 0.2);
+}
+
+table * {
+    padding: 0;
+}
+
+table th {
+    text-align: left;
+}
+
+main>section>article>nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--base-distance);
+}
+
+main>section>article>nav>div {
+    display: flex;
+}
+
+main>section>article>canvas {
+    box-shadow: 0px 10px 22px 0px rgba(0, 0, 0, 0.2);
+    margin-bottom: var(--base-distance);
+    width: 100%;
+    height: 100%;
+}
