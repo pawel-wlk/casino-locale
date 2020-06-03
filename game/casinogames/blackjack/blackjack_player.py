@@ -6,8 +6,8 @@ from ..deck import Hand
 
 class BlackjackPlayer(Player):
 
-    def __init__(self, username, channel_name):
-        super().__init__(username, channel_name)
+    def __init__(self, username, channel_name, balance=0):
+        super().__init__(username, channel_name, balance)
         self.status = 'waiting'
         self.first_hand = self.hand
         self.second_hand = Hand()
@@ -36,7 +36,7 @@ class BlackjackPlayer(Player):
             self.available_moves.append('hit')
             if len(self.hand.cards) == 2:
                 self.available_moves.append('double')
-            if len(self.hand.cards) == 2 and (self.hand.cards[0]).rank == (self.hand.cards[1]).rank:
+            if not self.splitted and len(self.hand.cards) == 2 and (self.hand.cards[0]).rank == (self.hand.cards[1]).rank:
                 self.available_moves.append('split')
 
         return self.available_moves

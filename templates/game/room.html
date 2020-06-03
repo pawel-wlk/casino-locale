@@ -19,6 +19,7 @@
     <input id="split" type="button" value="Split">
     <input id="double" type="button" value="Double">
     <input id="bet" type="button" value="Bet">
+    <input id="add_bot" type="button" value="Add bot">
 
 
     {{ room_name|json_script:"room-name" }}
@@ -102,6 +103,13 @@
             chatSocket.send(JSON.stringify({
                 'type': 'move',
                 'message': { 'action': 'bet', 'value': parseInt(message) }
+            }))
+        }
+
+        document.querySelector('#add_bot').onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'config',
+                'message': { 'action': 'add_bot' }
             }))
         }
 

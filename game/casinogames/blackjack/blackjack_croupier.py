@@ -1,6 +1,7 @@
 from ..croupier import Croupier
 from ..deck import Hand, Rank
 
+
 class BlackjackCroupier(Croupier):
 
     def init_game(self):
@@ -28,23 +29,25 @@ class BlackjackCroupier(Croupier):
 
         data = {
             'player': player.name,
-            'hand': player.hand.get_as_dict(),
+            'hand': [player.first_hand.get_as_dict(), player.second_hand.get_as_dict()],
             'status': player.status,
             'sum': self.hand_sum(player.hand),
             'balance': player.balance,
-            'available_moves': player.available_moves
+            'available_moves': player.available_moves,
+            'splitted': player.splitted
         }
         return data
 
 
-    def notify_all(self):
+    def notify_all(self, winners=[]):
         game_data = {
             'croupier': { 
                 'hand': self.table_cards.get_as_dict(), 
                 'sum': self.hand_sum(self.table_cards)
             },
             'game_status': self.status,
-            'pot': self.pot
+            'pot': self.pot,
+            'winners': winners
         }
         game_data['players'] = [self.get_player_data(p) for p in self.players]
         for p in self.players:
@@ -63,7 +66,6 @@ class BlackjackCroupier(Croupier):
         return hand_sum
 
 
-    # game_info idk how much should be sent
     def process_move(self, channel_name, move):
         # If players are not ready, do nothing
         if not self.is_ready():
@@ -82,6 +84,7 @@ class BlackjackCroupier(Croupier):
                     return
                 print(f'{player.name} bets {move["value"]}')
                 self.pot += move['value']
+                print(player.balance)
                 player.balance -= move['value']
                 self.next_turn()
             else:
@@ -89,16 +92,17 @@ class BlackjackCroupier(Croupier):
 
             if self.players.index(player) == len(self.players) - 1:
                 self.start_game()
+            self.notify_all()
 
 
         def handle_move(player, move):
-            # print(f'{player.name} makes a move: {move["action"]}')
+            print(f'{player.name} makes a move: {move["action"]}')
 
             if move['action'] == 'split':
                 if 'split' in player.available_moves:
                     player.splitted = True
-                    player.second_hand = player.first_hand[1]
-                    player.first_hand = player.first_hand[0]
+                    player.second_hand.cards = [player.first_hand.cards[1]]
+                    player.first_hand.cards = [player.first_hand.cards[0]]
                 else:
                     return
 
@@ -124,6 +128,8 @@ class BlackjackCroupier(Croupier):
                     else:
                         if self.hand_sum(player.first_hand) > 21:
                             player.status = 'lost'
+                        else:
+                            player.hand = player.first_hand
                         self.next_turn()
                 
             elif move['action'] == 'hit':
@@ -161,7 +167,7 @@ class BlackjackCroupier(Croupier):
                     winner.balance += int(self.pot / len(winners))
                     
                 self.status = 'finished'
-                self.notify_all()
+                self.notify_all([p.name for p in winners])
                 print("KONIEC")
 
         if self.status == 'betting':
