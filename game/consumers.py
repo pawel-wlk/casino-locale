@@ -7,17 +7,10 @@ from .casinogames.croupier import Croupier
 from .casinogames.player import Player
 from .casinogames.blackjack.blackjack_croupier import BlackjackCroupier
 from .casinogames.blackjack.blackjack_player import BlackjackPlayer
+from .models import current_games
 from .casinogames.blackjack.blackjack_bot import BlackjackBot
 import re
 import time
-
-def defaultRoom():
-    return {
-        'room_type': "",
-        'player_count': 0
-    }
-
-current_games = {}
 
 class GameRoomConsumer(JsonWebsocketConsumer):
     def join_room(self):
