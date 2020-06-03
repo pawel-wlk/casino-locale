@@ -8,6 +8,8 @@ from .casinogames.player import Player
 from .casinogames.blackjack.blackjack_croupier import BlackjackCroupier
 from .casinogames.blackjack.blackjack_player import BlackjackPlayer
 from .casinogames.blackjack.blackjack_bot import BlackjackBot
+import re
+import time
 
 current_games = defaultdict(int)
 
@@ -41,7 +43,6 @@ class GameRoomConsumer(JsonWebsocketConsumer):
 
         player = BlackjackPlayer(self.user.username, self.channel_name)
         self.croupier.add_player(player)
-        self.croupier.add_player(BlackjackBot(self.user.username + 'bot', self.channel_name + 'b', 2, self.croupier))
 
         current_games[self.room_name] += 1
 
@@ -63,6 +64,16 @@ class GameRoomConsumer(JsonWebsocketConsumer):
         elif json_data['type'] == 'init':
             print(f'{self.user.username} is ready')
             self.croupier.player_ready(self.channel_name)
+        elif json_data['type'] == 'config':
+            if message['action'] == 'add_bot' and self.croupier.status == 'waiting':
+                print([p.name for p in self.croupier.players])
+                num_of_bots = len(
+                    [p.name for p in self.croupier.players if re.search('^bot.*', p.name)])
+                t = int(round(time.time() * 1000))
+                bot_name = f'bot{num_of_bots + 1}_{hex(t)[2:]}'
+                self.croupier.add_player(BlackjackBot(
+                    bot_name, bot_name, 2, self.croupier))
+                print(f'Bot added: {bot_name}')
         else:
 
             self.room_send(
@@ -74,14 +85,12 @@ class GameRoomConsumer(JsonWebsocketConsumer):
                 }
             )
 
-        
     def notify(self, event):
         message = event['message']
         sender = event['sender']
         # print(event)
         print(f"{self.user.username} was notified: {message}")
         self.send_json({'message': message, 'sender': sender})
-
 
     def chat_message(self, event):
         message = event['message']

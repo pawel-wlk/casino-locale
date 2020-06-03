@@ -57,7 +57,9 @@ class BlackjackBot(BlackjackPlayer):
         player_hand = [Rank[c['rank']] for c in player['hand']]
         player_hand_sum = player['sum']
         next_move = self.strategy.next_move(
-            croupier_hand[0], player_hand, player_hand_sum)
+            croupier_hand[0], player_hand, player_hand_sum, self.splitted)
+        if next_move not in self.available_moves:
+            next_move = 'stand'
         self.send({'action': next_move})
 
 
@@ -87,13 +89,16 @@ class Strategy:
         self.real_value = self.curr_value / decks_left
         self.cards_seen = cards
 
-    def next_move(self, croupier_card, player_hand, hand_sum):
+    def next_move(self, croupier_card, player_hand, hand_sum, splitted):
+        print(player_hand, hand_sum)
         # First check if it is a pair or a hand with an ace
         if len(player_hand) == 2:
             hand = set(player_hand)
-            search_res = [row for row in self.moves if row.cards == hand]
-            if len(search_res) > 0:
-                return self.extract_move(search_res[0].moves[croupier_card])
+            # Multiple splits are not allowed
+            if len(hand) > 1 or not splitted:
+                search_res = [row for row in self.moves if row.cards == hand]
+                if len(search_res) > 0:
+                    return self.extract_move(search_res[0].moves[croupier_card])
 
         # Analyze only the value of the hand
         search_res = [row for row in self.moves if row.compare(hand_sum)]
@@ -111,9 +116,9 @@ class Strategy:
         # should be accepted. Non-negative value means that every number greater than it
         # should be accepted
         sign = math.copysign(1, move.value)
-        def compare(x): return x >= move.value
+        compare = lambda x: x >= move.value
         if sign < 0:
-            def compare(x): return x <= move.value
+            compare = lambda x: x >= move.value
 
         if compare(self.real_value):
             return move.extra_move
