@@ -11,6 +11,8 @@ autopep8 = "*"
 [packages]
 django = "*"
 channels = "*"
+daphne = "*"
+whitenoise = "*"
 
 [requires]
 python_version = "3.8"
