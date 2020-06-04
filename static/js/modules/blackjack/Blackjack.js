@@ -1,19 +1,7 @@
-import {
-    AnimationScheduler
-} from '../AnimationScheduler.js';
-
-import {
-    BlackjackPlayer
-} from './Player.js';
-
-import {
-    Animation,
-    createDefaultCallback
-} from '../Animation.js';
-
-import {
-    CardDeck
-} from '../CardDeck.js';
+import { AnimationScheduler } from '../AnimationScheduler.js';
+import { BlackjackPlayer, BlackjackPlayerHand } from './Player.js';
+import { Animation, createDefaultCallback } from '../Animation.js';
+import { CardDeck } from '../CardDeck.js';
 
 export const defaultConfig = {
     animationDuration: 500,
@@ -41,10 +29,12 @@ export class Blackjack {
             new CardDeck(true, this.config.deckPosition)
         ];
         this.players = [];
+
         this.croupier = new BlackjackPlayer('', {
             x: this.cardEngine.config.width / 2,
             y: this.cardEngine.config.cardHeight * this.cardEngine.config.base / 2
         });
+        this.croupier.hands.push(new BlackjackPlayerHand()); // croupier has one hand
 
         websocket.addEventListener('message', m => {
             this.parseMessage(m.data);
@@ -55,16 +45,41 @@ export class Blackjack {
         const data = JSON.parse(message);
         console.log('Message:', data);
 
-        data.message.croupier.hand.forEach(cardInfo => {
-            this.updatePlayerCard(cardInfo, this.croupier, 0);
+        const croupierHand = new BlackjackPlayerHand(data.message.croupier.hand);
+        this.croupier.hands[0].diffWithHand(croupierHand).forEach(card => {
+            this.addPlayerCardFromDeck(this.croupier, 0, card);
         });
 
         data.message.players.forEach(player => {
             const playerObject = this.updatePlayer(player.player);
-            player.hand.forEach((hand, handIndex) => { // new version
-                hand.forEach(cardInfo => {
-                    this.updatePlayerCard(cardInfo, playerObject, handIndex);
-                });
+            player.hand.forEach((hand, handIndex) => {
+                if (hand.length === 0) return; // we don't want to include the empty hands
+
+                const handObject = new BlackjackPlayerHand(hand);
+                let playerHand = playerObject.hands[handIndex];
+
+                if (!playerHand) { // split or just new game
+                    playerHand = (playerObject.hands[handIndex] = new BlackjackPlayerHand()); // create the hand
+                    let done = false; // flag to stop iteration
+                    for (let h of playerObject.hands) { // check previous hands...
+                        const diff = handObject.diffWithHand(h); // diff the message hand
+                        if (diff.length) { // current hand holds more cards than message hand - was splitted
+                            for (let i = 0; i < h.cards.length && !done; i++) { // find duplicate card
+                                for (let j = i; j < h.cards.length && !done; j++) {
+                                    if (h.cards[i].compareWith(h.cards[j])) {
+                                        const cardToSplit = h.cards.splice(i, 1)[0];
+                                        this.addPlayerCardFromSplit(playerObject, handIndex, cardToSplit);
+                                        done = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (done) break;
+                    }
+                }
+
+                const diff = playerHand.diffWithHand(handObject);
+                diff.forEach(card => this.addPlayerCardFromDeck(playerObject, handIndex, card));
             });
         });
     }
@@ -73,13 +88,13 @@ export class Blackjack {
         let player = this.players.find(player => player.id === id);
         if (!player) {
             player = new BlackjackPlayer(id, {
-                x: this.config.maxHandWidth * (this.players.length + 1),
-                y: 300
+                x: this.config.maxHandWidth * (this.players.length + 1.5),
+                y: 500
             });
-            this.players.push(player); // TODO: proper locations
-        }
+            this.players.push(player);
 
-        console.log('Updating player...', player);
+            console.log('Adding new player...', player);
+        }
 
         return player;
     }
@@ -88,28 +103,25 @@ export class Blackjack {
         const baseX = player.location.x + (handIndex - player.hands.length / 2) * this.config.maxHandWidth;
 
         return {
-            x: baseX + this.cardEngine.config.base * this.cardEngine.config.cardWidth / 2 * (player.hands[handIndex].length - 1),
-            y: player.location.y + this.cardEngine.config.base * this.cardEngine.config.cardWidth / 2 * (player.hands[handIndex].length - 1),
+            x: baseX + this.cardEngine.config.base * this.cardEngine.config.cardWidth / 2 * (player.hands[handIndex].cards.length - 1),
+            y: player.location.y + this.cardEngine.config.base * this.cardEngine.config.cardWidth / 2 * (player.hands[handIndex].cards.length - 1),
         };
     }
 
-    updatePlayerCard(cardInfo, player, handIndex) {
-        const cards = this.decks.map(deck => deck.getCard(cardInfo));
-        const card = cards[0];
-
-        const handHoldingCard = player.hands.find(hand => hand.includes(card));
-        if (player.hands.length === 0) { // special case for none cards
-            player.hands.push([card]);
-        } else if (handIndex > player.hands.length - 1) { // card in a new hand - was splitted
-            handHoldingCard.splice(handHoldingCard.indexOf(card), 1); // remove card from the hand
-            player.hands.push([card]); // add a new hand with the card
-        } else { // card in existing hand - do nothing
-            if (handHoldingCard) return;
-            if (player.hands[handIndex].push(card));
+    addPlayerCardFromDeck(player, handIndex, cardToAdd) {
+        let card = null;
+        for (let deck of this.decks) {
+            if (card = deck.getCard(cardToAdd)) break;
         }
 
-        console.log('Updating card...', card, player, handIndex);
+        if (card === null) {
+            console.error('There are no more cards like that in decks');
+            return;
+        }
 
+        console.log('Adding new card from deck...', card);
+
+        player.hands[handIndex].cards.push(card);
         this.cardEngine.objects.push(card);
         this.animationScheduler.animateAfter(
             new Animation(
@@ -118,6 +130,21 @@ export class Blackjack {
                 createDefaultCallback.position(
                     card,
                     card.position,
+                    this.offsetCardLocation(player, handIndex)
+                )
+            )
+        );
+    }
+
+    addPlayerCardFromSplit(player, handIndex, cardToMove) {
+        player.hands[handIndex].cards.push(cardToMove);
+        this.animationScheduler.animateAfter(
+            new Animation(
+                0,
+                this.config.animationDuration,
+                createDefaultCallback.position(
+                    cardToMove,
+                    cardToMove.position,
                     this.offsetCardLocation(player, handIndex)
                 )
             )

@@ -28,7 +28,8 @@ export class CardDeck {
         }
     }
 
-    getCard(cardInfo) {
-        return this.cards.find(card => card.rank === defaultRanks[cardInfo.rank] && card.color === defaultColors[cardInfo.suit]);
+    getCard(card) {
+        const index = this.cards.findIndex(c => c.compareWith(card));
+        return index > -1 ? this.cards.splice(index, 1)[0] : null;
     }
 }

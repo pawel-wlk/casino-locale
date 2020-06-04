@@ -50,6 +50,10 @@ export class Card /* implements GameObject */ {
         };
     }
 
+    static fromCardInfo(cardInfo, cardConfig = defaultCardConfig, ranks = defaultRanks, colors = defaultColors) {
+        return new Card(ranks[cardInfo.rank], colors[cardInfo.suit], cardConfig);
+    }
+
     inBoundary(pointerEvent, engineConfig) {
         return pointerEvent.layerX >= this.position.x &&
             pointerEvent.layerX <= this.position.x + engineConfig.cardWidth * engineConfig.base &&
