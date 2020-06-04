@@ -1,24 +1,10 @@
-import {
-    CardEngine
-} from '../modules/CardEngine.js';
-import {
-    Card,
-    defaultColors
-} from '../modules/Card.js';
-import {
-    Animation,
-    createDefaultCallback
-} from '../modules/Animation.js';
-import {
-    Token,
-    defaultValues
-} from '../modules/Token.js';
-import {
-    Blackjack
-} from '../modules/blackjack/Blackjack.js';
+import { CardEngine } from '../modules/CardEngine.js';
+import { Blackjack } from '../modules/blackjack/Blackjack.js';
 
 window.addEventListener('load', () => {
     const roomName = JSON.parse(document.getElementById('room-name').textContent);
+    const userId = JSON.parse(document.getElementById('user-id').textContent);
+
     const playerList = document.getElementById('player-list');
     const croupierSum = document.getElementById('croupier-sum');
     const gameSocket = new WebSocket(`ws://${window.location.host}/ws/room/${roomName}/`);
@@ -44,7 +30,7 @@ window.addEventListener('load', () => {
     gameSocket.addEventListener('message', message => {
         const data = JSON.parse(message.data); // parse data
 
-        const availableMoves = data.message.players /*.find(p => p.player === 'TODO')*/ [0].available_moves; // update actions
+        const availableMoves = data.message.players.find(p => p.player === userId).available_moves; // update actions
         inputs.forEach(input => {
             input.disabled = !availableMoves.includes(input.dataset['action']);
         });

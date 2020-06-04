@@ -11,6 +11,7 @@
 
 {% block content %}
 {{ room_name|json_script:"room-name" }}
+{{ user|json_script:"user-id" }}
 <section>
     <article>
         <canvas></canvas>

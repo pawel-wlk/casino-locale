@@ -12,7 +12,7 @@ def index(request):
             'rooms': current_games.items,
             "nav_links": nav_links
         })
-    
+
     game_type = request.POST['type']
     name = request.POST['roomName']
 
@@ -36,5 +36,6 @@ def room(request, room_name):
 
     return render(
         request, "game/room.html", {"room_name": room_name,
-                                    "nav_links": nav_links, }
+                                    "nav_links": nav_links,
+                                    "user": request.user.username}
     )
