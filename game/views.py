@@ -34,9 +34,17 @@ def room(request, room_name):
     if room_name not in current_games or current_games[room_name]['pending'] == True:
         return redirect('index')
 
-    return render(
-        request, "game/room.html", {"room_name": room_name,
-                                    "nav_links": nav_links,
-                                    "user": request.user.username,
-                                    "render_blackjack": current_games[room_name]['room_type'] == 'blackjack'}
-    )
+    if current_games[room_name]['room_type'] == 'blackjack':
+        return render(
+            request, "game/blackjack.html", {"room_name": room_name,
+                                             "nav_links": nav_links,
+                                             "user": request.user.username
+                                             }
+        )
+    elif current_games[room_name]['room_type'] == 'poker':
+        return render(
+            request, "game/poker.html", {"room_name": room_name,
+                                         "nav_links": nav_links,
+                                         "user": request.user.username
+                                         }
+        )

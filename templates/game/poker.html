@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% load static %}
+<script src="{% static "js/game/poker.js" %}" type="module"></script>
+<link rel="stylesheet" href="{% static "css/room.css" %}">
+{% endblock head %}
+
+{% block title %}
+<title>Poker - Room {{room_name}}</title>
+{% endblock title %}
+
+{% block content %}
+{{ room_name|json_script:"room-name" }}
+{{ user|json_script:"user-id" }}
+<section>
+    <article>
+        <canvas></canvas>
+        <nav>
+            <input class="button" data-action="ready" type="button" value="Ready">
+            <input disabled class="button" data-action="fold" type="button" value="Fold">
+            <input disabled class="button" data-action="call" type="button" value="Call">
+            <input disabled class="button" data-action="check" type="button" value="Check">
+            <div>
+                <input disabled data-action="raise" id="raise-value" type="number">
+                <input disabled class="button" data-action="raise" type="button" value="Raise">
+            </div>
+            <div>
+                <input disabled data-action="bet" id="bet-value" type="number">
+                <input disabled class="button" data-action="bet" type="button" value="Bet">
+            </div>
+        </nav>
+    </article>
+    <article>
+        <h1>You're in room {{ room_name }}</h1>
+        <h1>Pot sum: <em id="pot-sum">0</em></h1>
+        <h1>Your balance: <em id="your-balance">0</em></h1>
+    </article>
+</section>
+{% endblock content%}
