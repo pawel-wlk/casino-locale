@@ -7,6 +7,8 @@ from .casinogames.croupier import Croupier
 from .casinogames.player import Player
 from .casinogames.blackjack.blackjack_croupier import BlackjackCroupier
 from .casinogames.blackjack.blackjack_player import BlackjackPlayer
+from .casinogames.poker.poker_croupier import PokerCroupier
+from .casinogames.poker.poker_player import PokerPlayer
 from .models import current_games
 from .casinogames.blackjack.blackjack_bot import BlackjackBot
 import re
@@ -37,10 +39,13 @@ class GameRoomConsumer(JsonWebsocketConsumer):
 
         self.join_room()
 
-        if current_games[self.room_name]['room_type']:
+        if current_games[self.room_name]['room_type'] == 'blackjack':
             self.croupier = BlackjackCroupier.get_instance(self.room_name)
+            player = BlackjackPlayer(self.user.username, self.channel_name)
+        else: 
+            self.croupier = PokerCroupier.get_instance(self.room_name)
+            player = PokerPlayer(self.user.username, self.channel_name)
 
-        player = BlackjackPlayer(self.user.username, self.channel_name)
         self.croupier.add_player(player)
 
         current_games[self.room_name]['player_count'] += 1
