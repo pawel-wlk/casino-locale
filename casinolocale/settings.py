@@ -25,7 +25,7 @@ SECRET_KEY = "z_f2adh8(!ehtxi9jo3=!pd%xpjf9wm@ok6_n1243$rk4t0#19"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['intense-bastion-96881.herokuapp.com']
+ALLOWED_HOSTS = ['intense-bastion-96881.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
