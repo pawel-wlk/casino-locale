@@ -38,5 +38,5 @@ def room(request, room_name):
         request, "game/room.html", {"room_name": room_name,
                                     "nav_links": nav_links,
                                     "user": request.user.username,
-                                    "render_blackjack": current_games[room_name]['game_type'] == 'blackjack'}
+                                    "render_blackjack": current_games[room_name]['room_type'] == 'blackjack'}
     )
