@@ -54,6 +54,20 @@ class PokerCroupier(Croupier):
             game_data["player"] = self.get_player_data(p)
             p.update(game_data)
 
+    def notify_all_end(self):
+        game_data = {
+            "game_status": self.status,
+            "game_round": self.round,
+            "turn": [p.name for p in self.players if p.his_turn == True],
+            "pot": self.pot,
+            "bet": self.bet,
+            "table_cards": self.table_cards.get_as_dict(),
+            "round_betted": self.round_betted
+        }
+        game_data['players'] = [self.get_player_data(p) for p in self.players]
+        for p in self.players:
+            p.update(game_data)
+
     def get_player_data(self, player):
         if self.status != "finished":
             player.calc_available_moves()
@@ -284,6 +298,7 @@ class PokerCroupier(Croupier):
                 winner[0].balance += self.pot
                 print(f"Player {winner[0].name} has won {self.pot} with {winner[1]}")
                 print("rozgrywka skończona")
+                self.notify_all_end()
                 return
 
                         
