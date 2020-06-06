@@ -8,8 +8,8 @@ BIG_BLIND = 2 * SMALL_BLIND
 
 
 class PokerCroupier(Croupier):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args):
+        super().__init__(*args)
         self.round = 0
         self.bet = BIG_BLIND
         self.round_betted = False
