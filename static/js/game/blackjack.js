@@ -1,5 +1,9 @@
-import { CardEngine } from '../modules/CardEngine.js';
-import { Blackjack } from '../modules/blackjack/Blackjack.js';
+import {
+    CardEngine
+} from '../modules/CardEngine.js';
+import {
+    Blackjack
+} from '../modules/blackjack/Blackjack.js';
 
 window.addEventListener('load', () => {
     const roomName = JSON.parse(document.getElementById('room-name').textContent);
@@ -11,20 +15,21 @@ window.addEventListener('load', () => {
 
     const inputs = document.querySelectorAll('input');
     inputs.forEach(input => {
-        input.addEventListener('click', event => {
-            const payload = {
-                type: event.target.dataset['action'] === 'ready' ? 'init' : 'move',
-                message: {
-                    action: event.target.dataset['action']
+        if (input.type !== 'number')
+            input.addEventListener('click', event => {
+                const payload = {
+                    type: event.target.dataset['action'] === 'ready' ? 'init' : 'move',
+                    message: {
+                        action: event.target.dataset['action']
+                    }
+                };
+
+                if (event.target.dataset['action'] === 'bet') {
+                    payload.message.value = Number.parseInt(document.getElementById('bet-value').value);
                 }
-            };
 
-            if (event.target.dataset['action'] === 'bet') {
-                payload.message.value = Number.parseInt(document.getElementById('bet-value').value);
-            }
-
-            gameSocket.send(JSON.stringify(payload));
-        });
+                gameSocket.send(JSON.stringify(payload));
+            });
     });
 
     gameSocket.addEventListener('message', message => {

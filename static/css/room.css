@@ -24,6 +24,10 @@ main>section>article>table {
     box-shadow: 0px 10px 22px 0px rgba(0, 0, 0, 0.2);
 }
 
+nav>div>input[type="button"] {
+    flex-grow: 1;
+}
+
 table * {
     padding: 0;
 }
