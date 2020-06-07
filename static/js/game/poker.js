@@ -44,6 +44,8 @@ window.addEventListener('load', () => {
             inputs.forEach(input => {
                 input.disabled = !data.message.player.available_moves.includes(input.dataset['action']);
             });
+
+            yourBalance.textContent = data.message.player.balance;    
         }
 
         if (data.message.players) {
@@ -59,9 +61,8 @@ window.addEventListener('load', () => {
                 playerList.append(row);
             });
         }
-
+        
         potSum.textContent = data.message.pot;
-        yourBalance.textContent = data.message.player.balance;
     });
 
     const engine = new CardEngine(document.querySelector('canvas'));
