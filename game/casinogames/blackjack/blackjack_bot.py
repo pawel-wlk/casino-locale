@@ -54,7 +54,7 @@ class BlackjackBot(BlackjackPlayer):
                          for c in game_data['croupier']['hand']]
         player = [p for p in game_data['players']
                   if p['player'] == self.name][0]
-        player_hand = [Rank[c['rank']] for c in player['hand']]
+        player_hand = [Rank[c['rank']] for c in player['hand'][player['current_hand']]]
         player_hand_sum = player['sum']
         next_move = self.strategy.next_move(
             croupier_hand[0], player_hand, player_hand_sum, self.splitted)
@@ -66,7 +66,7 @@ class BlackjackBot(BlackjackPlayer):
 class Strategy:
     def update(self, game_data):
         cards = [Rank[c['rank']] for player in game_data['players']
-                 for c in player['hand']]
+                 for hand in player['hand'] for c in hand]
         cards += [Rank[c['rank']] for c in game_data['croupier']['hand']]
 
         # If there aren't any seen cards, the game has just started
@@ -234,7 +234,7 @@ class Strategy:
                         {
                             Rank.TWO: Move(0, 'stand', ''), Rank.THREE: Move(0, 'stand', ''),
                             Rank.FOUR: Move(0, 'stand', ''), Rank.FIVE: Move(0, 'stand', ''),
-                            Rank.SIX: Move(0, 'stand', ''), Rank.SEVEN: Move(0, 'hit', ''),
+                            Rank.SIX: Move(0, 'stand', ''), Rank.SEVEN: Move(0, 'stand', ''),
                             Rank.EIGHT: Move(0, 'stand', ''), Rank.NINE: Move(0, 'stand', ''),
                             Rank.TEN: Move(0, 'stand', ''), Rank.JACK: Move(0, 'stand', ''),
                             Rank.QUEEN: Move(0, 'stand', ''), Rank.KING: Move(0, 'stand', ''),

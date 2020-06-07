@@ -13,6 +13,7 @@ class BlackjackPlayer(Player):
         self.second_hand = Hand()
         self.splitted = False
         self.doubled = False
+        self.hand_index = 0
 
 
     def update(self, game_data):
