@@ -47,7 +47,7 @@ export class Poker {
         });
         this.player = new PokerPlayer('player', {
             x: this.cardEngine.config.width / 2 - 1.25 * this.cardEngine.config.base * this.cardEngine.config.cardWidth,
-            y: this.cardEngine.config.height - this.cardEngine.config.cardHeight * this.cardEngine.config.base * 2
+            y: this.cardEngine.config.height - this.cardEngine.config.cardHeight * this.cardEngine.config.base * 3.5
         });
 
         console.log('Initiated:', this.player, this.table);
@@ -66,10 +66,23 @@ export class Poker {
             this.addCardFromDeck(this.table, card);
         });
 
-        const playerHand = new PokerPlayerHand(data.message.player.hand);
-        this.player.hand.diffWithHand(playerHand).forEach(card => {
-            this.addCardFromDeck(this.player, card);
-        });
+        if (data.message.player) {
+            const playerHand = new PokerPlayerHand(data.message.player.hand);
+            this.player.hand.diffWithHand(playerHand).forEach(card => {
+                this.addCardFromDeck(this.player, card);
+            });
+        } else if (data.message.players) {
+            data.message.players.forEach((player, index) => {
+                const pokerPlayer = new PokerPlayer(player.player, {
+                    x: 0.5 * this.cardEngine.config.base * this.cardEngine.config.cardWidth,
+                    y: (index + 2) * this.cardEngine.config.cardHeight * this.cardEngine.config.base
+                });
+                const playerHand = new PokerPlayerHand(player.hand);
+                pokerPlayer.hand.diffWithHand(playerHand).forEach(card => {
+                    this.addCardFromDeck(pokerPlayer, card);
+                });
+            });
+        }
     }
 
     offsetCardLocation(player, cardNo) {
