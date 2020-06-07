@@ -73,16 +73,18 @@ export class Poker {
                 this.addCardFromDeck(this.player, card);
             });
         } else if (data.message.players) {
-            data.message.players.filter(player => player.player !== this.playerId).forEach((player, index) => {
-                const pokerPlayer = new PokerPlayer(player.player, {
-                    x: 0.5 * this.cardEngine.config.base * this.cardEngine.config.cardWidth,
-                    y: (index + 2) * 1.5 * this.cardEngine.config.cardHeight * this.cardEngine.config.base
+            data.message.players
+                .filter(player => player.player !== this.playerId && player.status !== 'fold')
+                .forEach((player, index) => {
+                    const pokerPlayer = new PokerPlayer(player.player, {
+                        x: 0.5 * this.cardEngine.config.base * this.cardEngine.config.cardWidth,
+                        y: (index + 2) * 1.5 * this.cardEngine.config.cardHeight * this.cardEngine.config.base
+                    });
+                    const playerHand = new PokerPlayerHand(player.hand);
+                    pokerPlayer.hand.diffWithHand(playerHand).forEach(card => {
+                        this.addCardFromDeck(pokerPlayer, card, true);
+                    });
                 });
-                const playerHand = new PokerPlayerHand(player.hand);
-                pokerPlayer.hand.diffWithHand(playerHand).forEach(card => {
-                    this.addCardFromDeck(pokerPlayer, card, true);
-                });
-            });
         }
     }
 
