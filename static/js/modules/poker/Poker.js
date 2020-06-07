@@ -25,8 +25,9 @@ export const defaultConfig = {
 }
 
 export class Poker {
-    constructor(websocket, cardEngine, pokerConifg = defaultConfig) {
+    constructor(websocket, cardEngine, playerId, pokerConifg = defaultConfig) {
         this.cardEngine = cardEngine;
+        this.playerId = playerId;
         this.config = {
             ...pokerConifg,
             deckPosition: {
@@ -42,12 +43,12 @@ export class Poker {
         ];
 
         this.table = new PokerPlayer('', {
-            x: this.cardEngine.config.width / 2 - 2 * this.cardEngine.config.base * this.cardEngine.config.cardWidth,
+            x: this.cardEngine.config.width / 2 - 3.5 * this.cardEngine.config.base * this.cardEngine.config.cardWidth,
             y: this.cardEngine.config.cardHeight * this.cardEngine.config.base / 2
         });
         this.player = new PokerPlayer('player', {
             x: this.cardEngine.config.width / 2 - 1.25 * this.cardEngine.config.base * this.cardEngine.config.cardWidth,
-            y: this.cardEngine.config.height - this.cardEngine.config.cardHeight * this.cardEngine.config.base * 3.5
+            y: this.cardEngine.config.height - this.cardEngine.config.cardHeight * this.cardEngine.config.base * 2
         });
 
         console.log('Initiated:', this.player, this.table);
@@ -72,10 +73,10 @@ export class Poker {
                 this.addCardFromDeck(this.player, card);
             });
         } else if (data.message.players) {
-            data.message.players.forEach((player, index) => {
+            data.message.players.filter(player => player.player !== this.playerId).forEach((player, index) => {
                 const pokerPlayer = new PokerPlayer(player.player, {
                     x: 0.5 * this.cardEngine.config.base * this.cardEngine.config.cardWidth,
-                    y: (index + 2) * this.cardEngine.config.cardHeight * this.cardEngine.config.base
+                    y: (index + 2) * 1.5 * this.cardEngine.config.cardHeight * this.cardEngine.config.base
                 });
                 const playerHand = new PokerPlayerHand(player.hand);
                 pokerPlayer.hand.diffWithHand(playerHand).forEach(card => {
