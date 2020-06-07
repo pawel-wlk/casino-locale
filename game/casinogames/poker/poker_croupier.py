@@ -161,12 +161,14 @@ class PokerCroupier(Croupier):
                     self.pot += (player.balance + self.bet)
                     player.balance -= (player.balance + self.bet)
                 elif player.status == "first_round":
-                    if player.balance == -SMALL_BLIND:
-                        self.pot += SMALL_BLIND
-                        player.balance -= SMALL_BLIND
-                    else:
-                        self.pot += BIG_BLIND
-                        player.balance -= BIG_BLIND
+                    self.pot += (player.balance + self.bet)
+                    player.balance -= (player.balance + self.bet)
+                    # if player.balance == -SMALL_BLIND:
+                    #     self.pot += SMALL_BLIND
+                    #     player.balance -= SMALL_BLIND
+                    # else:
+                    #     self.pot += BIG_BLIND
+                    #     player.balance -= BIG_BLIND
                 elif player.status == "playing":
                     if (
                         player == self.players[0]
@@ -180,9 +182,12 @@ class PokerCroupier(Croupier):
 
             elif move["action"] == "raise":
                 if player.status == "first_round":
-                    self.pot += 2 * BIG_BLIND
-                    self.bet += 2 * BIG_BLIND
-                    player.balance -= 2 * BIG_BLIND
+                    if type(move["value"]) != int:
+                        return
+                    print(f'{player.name} bets {move["value"]}')
+                    self.pot += move["value"]
+                    self.bet += move["value"]
+                    player.balance = -self.bet
                 elif (
                     player == self.players[0]
                     or self.players[self.players.index(player) - 1].status == "playing"
@@ -207,6 +212,7 @@ class PokerCroupier(Croupier):
 
             if self.round == 1 and not self.status == "additional_round":
                 if self.players.index(player) == 0:
+                    print("A")
                     if not all([(p.status == "fold" or -p.balance == self.bet) for p in self.players]):
                         self.status = "additional_round"
                         for p in [p for p in self.players if (p.status != "fold" and -p.balance != self.bet)]:
@@ -218,10 +224,12 @@ class PokerCroupier(Croupier):
                     else:
                         self.start_game()
                 else:
+                    print("B")
                     self.next_turn()
                     self.notify_all()
             elif not self.status == "additional_round" and self.round > 1 and self.round < 5:
                 if player == self.last_player():
+                    print("C")
                     if not all([(p.status == "fold" or -p.balance == self.bet) for p in self.players]):
                         self.status = "additional_round"
                         for p in [p for p in self.players if (p.status != "fold" and -p.balance != self.bet)]:
@@ -245,11 +253,14 @@ class PokerCroupier(Croupier):
                             self.round += 1
                             self.notify_all()
                 else:
+                    print("D")
                     self.next_turn()
                     self.notify_all()
             elif self.status == "additional_round":
                 if all([(p.status == "fold" or -p.balance == self.bet) for p in self.players]):
-                    if self.round < 4:
+                    if self.round == 1:
+                        self.start_game()
+                    elif self.round < 4:
                         self.round_betted = False
                         self.table_cards.add_cards(self.deck.get_cards(1))
                         for p in self.players:
@@ -264,6 +275,7 @@ class PokerCroupier(Croupier):
                         self.round += 1
                         self.notify_all()
                 else:
+                    print("F")
                     self.next_turn_additional_round()
                     self.notify_all()
             else:
