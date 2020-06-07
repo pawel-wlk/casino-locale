@@ -46,7 +46,7 @@ window.addEventListener('load', () => {
                 input.disabled = !data.message.player.available_moves.includes(input.dataset['action']);
             });
 
-            yourBalance.textContent = data.message.player.balance;    
+            yourBalance.textContent = data.message.player.balance;
         }
 
         if (data.message.players) {
@@ -54,13 +54,16 @@ window.addEventListener('load', () => {
                 const row = document.createElement('tr');
                 const name = document.createElement('td');
                 const status = document.createElement('td');
+                const balance = document.createElement('td');
 
                 name.textContent = player.player;
                 status.textContent = player.status;
+                balance.textContent = player.balance;
 
-                row.append(name, status);
+                row.append(name, status, balance);
                 playerList.append(row);
             });
+            yourBalance.textContent = data.message.players.find(player => player.player === playerId).balance;
         }
 
         potSum.textContent = data.message.pot;
