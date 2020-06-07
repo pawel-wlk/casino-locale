@@ -80,7 +80,7 @@ export class Poker {
                 });
                 const playerHand = new PokerPlayerHand(player.hand);
                 pokerPlayer.hand.diffWithHand(playerHand).forEach(card => {
-                    this.addCardFromDeck(pokerPlayer, card);
+                    this.addCardFromDeck(pokerPlayer, card, true);
                 });
             });
         }
@@ -93,7 +93,7 @@ export class Poker {
         };
     }
 
-    addCardFromDeck(player, cardToAdd) {
+    addCardFromDeck(player, cardToAdd, quick = false) {
         let card = null;
         for (let deck of this.decks) {
             if (card = deck.getCard(cardToAdd)) break;
@@ -109,16 +109,30 @@ export class Poker {
         console.log(player)
         player.hand.cards.push(card);
         this.cardEngine.objects.push(card);
-        this.animationScheduler.animateAfter(
-            new Animation(
-                0,
-                this.config.animationDuration,
-                createDefaultCallback.position(
-                    card,
-                    card.position,
-                    this.offsetCardLocation(player, player.hand.cards.length - 1)
+        if (quick) {
+            this.animationScheduler.animateWith(
+                new Animation(
+                    0,
+                    this.config.animationDuration,
+                    createDefaultCallback.position(
+                        card,
+                        card.position,
+                        this.offsetCardLocation(player, player.hand.cards.length - 1)
+                    )
                 )
-            )
-        );
+            );
+        } else {
+            this.animationScheduler.animateAfter(
+                new Animation(
+                    0,
+                    this.config.animationDuration,
+                    createDefaultCallback.position(
+                        card,
+                        card.position,
+                        this.offsetCardLocation(player, player.hand.cards.length - 1)
+                    )
+                )
+            );
+        }
     }
 }

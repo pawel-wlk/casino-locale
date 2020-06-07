@@ -7,6 +7,7 @@ import {
 
 window.addEventListener('load', () => {
     const roomName = JSON.parse(document.getElementById('room-name').textContent);
+    const playerId = JSON.parse(document.getElementById('user-id').textContent);
 
     const potSum = document.getElementById('pot-sum');
     const yourBalance = document.getElementById('your-balance');
@@ -61,12 +62,12 @@ window.addEventListener('load', () => {
                 playerList.append(row);
             });
         }
-        
+
         potSum.textContent = data.message.pot;
     });
 
     const engine = new CardEngine(document.querySelector('canvas'));
-    const poker = new Poker(gameSocket, engine);
+    const poker = new Poker(gameSocket, engine, playerId);
 
     function draw(time) {
         requestAnimationFrame(draw);
