@@ -15,11 +15,10 @@ class BlackjackPlayer(Player):
         self.doubled = False
         self.hand_index = 0
 
-
     def update(self, game_data):
         channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.send)(self.channel_name, {"type": "notify", "message": game_data, 'sender': self.name})
-
+        async_to_sync(channel_layer.send)(self.channel_name, {
+            "type": "notify", "message": game_data, 'sender': self.name})
 
     def calc_available_moves(self):
         if self.status == 'waiting':

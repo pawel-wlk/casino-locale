@@ -84,7 +84,7 @@ class PokerCroupier(Croupier):
             for move in ["raise", "call"]:
                 if move in player.available_moves:
                     player.available_moves.remove(move)
-            
+
         data = {
             "player": player.name,
             "hand": player.hand.get_as_dict(),
@@ -110,13 +110,13 @@ class PokerCroupier(Croupier):
         i = search_res[0]
         self.players[i].his_turn = False
         while self.players[(i+1) % len(self.players)].status == "fold":
-            i+=1
+            i += 1
         self.players[(i + 1) % len(self.players)].his_turn = True
         print(self.players[(i + 1) % len(self.players)].name)
 
-
     def next_turn_additional_round(self):
-        search_res = [i for i, p in enumerate(self.players) if (p.status != "fold" and p.balance != -self.bet)]
+        search_res = [i for i, p in enumerate(self.players) if (
+            p.status != "fold" and p.balance != -self.bet)]
         if len(search_res) == 0:
             return
         i = search_res[0]
@@ -131,7 +131,6 @@ class PokerCroupier(Croupier):
         # If players are not ready, do nothing
         if not self.is_ready() or self.status == "finished":
             return
-
 
         i, p = [
             el for el in enumerate(self.players) if el[1].channel_name == channel_name
@@ -176,7 +175,7 @@ class PokerCroupier(Croupier):
                         == "playing"
                     ):
                         # tutaj powinien wyrównywać do obecnej stawki cokolwiek to znaczy
-                            # done - zakładając że player.balance w danej rozgrywce resetowany
+                        # done - zakładając że player.balance w danej rozgrywce resetowany
                         self.pot += (player.balance + self.bet)
                         player.balance -= (player.balance + self.bet)
 
@@ -208,7 +207,6 @@ class PokerCroupier(Croupier):
                     player.status = "check"
 
             # self.notify_all()
-
 
             if self.round == 1 and not self.status == "additional_round":
                 if self.players.index(player) == 0:
@@ -280,22 +278,24 @@ class PokerCroupier(Croupier):
                     self.notify_all()
             else:
                 print("XD")
-            
+
             if len([p for p in self.players if p.status != "fold"]) == 1:
                 won = [p for p in self.players if p.status != "fold"][0]
                 print(f"Player {won.name} wons {self.pot}")
                 self.status = "finished"
                 return
 
-            if self.round == 5: # and player == self.last_player():
+            if self.round == 5:  # and player == self.last_player():
                 hands = []
                 for p in self.players:
                     if p.status != "fold":
-                        cards = convert(p.hand.cards) + convert(self.table_cards.cards)
+                        cards = convert(p.hand.cards) + \
+                            convert(self.table_cards.cards)
                         best = 0
                         for possibility in list(map(list, list(itertools.combinations(cards, 5)))):
                             if evaluate_hand(possibility)[2] > best:
-                                best, h = evaluate_hand(possibility)[2], possibility
+                                best, h = evaluate_hand(possibility)[
+                                    2], possibility
                         hands.append((p, best, h))
 
                 best = max(hands, key=lambda x: x[1])
@@ -308,10 +308,10 @@ class PokerCroupier(Croupier):
                             winner = candidate
                 winner[0].status = "won"
                 winner[0].balance += self.pot
-                print(f"Player {winner[0].name} has won {self.pot} with {winner[1]}")
+                print(
+                    f"Player {winner[0].name} has won {self.pot} with {winner[1]}")
                 print("rozgrywka skończona")
                 self.notify_all_end()
                 return
 
-                        
         handle_move(p, move)

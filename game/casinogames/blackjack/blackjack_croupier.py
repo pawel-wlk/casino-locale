@@ -11,7 +11,6 @@ class BlackjackCroupier(Croupier):
         self.status = 'betting'
         self.notify_all()
 
-
     def start_game(self):
         for player in self.players:
             player.his_turn = False
@@ -21,7 +20,6 @@ class BlackjackCroupier(Croupier):
         self.players[0].his_turn = True
         self.status = 'playing'
         self.notify_all()
-
 
     def get_player_data(self, player):
         if self.status != 'finished':
@@ -39,11 +37,10 @@ class BlackjackCroupier(Croupier):
         }
         return data
 
-
     def notify_all(self, winners=[]):
         game_data = {
-            'croupier': { 
-                'hand': self.table_cards.get_as_dict(), 
+            'croupier': {
+                'hand': self.table_cards.get_as_dict(),
                 'sum': self.hand_sum(self.table_cards)
             },
             'game_status': self.status,
@@ -53,7 +50,6 @@ class BlackjackCroupier(Croupier):
         game_data['players'] = [self.get_player_data(p) for p in self.players]
         for p in self.players:
             p.update(game_data)
-
 
     def hand_sum(self, hand):
         hand_sum = 0
@@ -66,18 +62,17 @@ class BlackjackCroupier(Croupier):
             hand_sum -= 10
         return hand_sum
 
-
     def process_move(self, channel_name, move):
         # If players are not ready, do nothing
         if not self.is_ready():
             return
 
-        i, p = [el for el in enumerate(self.players) if el[1].channel_name == channel_name][0]
+        i, p = [el for el in enumerate(
+            self.players) if el[1].channel_name == channel_name][0]
         # If it's not this player's turn, do nothing
         if not p.his_turn:
             print(f'{p.name}: not his turn')
             return
-
 
         def handle_bet(player, move):
             if move['action'] == 'bet':
@@ -94,7 +89,6 @@ class BlackjackCroupier(Croupier):
             if self.players.index(player) == len(self.players) - 1:
                 self.start_game()
             self.notify_all()
-
 
         def handle_move(player, move):
             print(f'{player.name} makes a move: {move["action"]}')
@@ -133,7 +127,7 @@ class BlackjackCroupier(Croupier):
                         else:
                             player.hand = player.first_hand
                         self.next_turn()
-                
+
             elif move['action'] == 'hit':
                 player.hand.add_cards(self.deck.get_cards(1))
                 if self.hand_sum(p.hand) > 21:
@@ -164,12 +158,13 @@ class BlackjackCroupier(Croupier):
                     self.table_cards.add_cards(self.deck.get_cards(1))
 
                 print('dealer sum', croupier_sum)
-                winners = [p for p in self.players if (p.status != 'lost' and (self.hand_sum(p.hand) > croupier_sum or croupier_sum > 21)) or p.status == 'won']
+                winners = [p for p in self.players if (p.status != 'lost' and (self.hand_sum(
+                    p.hand) > croupier_sum or croupier_sum > 21)) or p.status == 'won']
                 print(f'Winners: {[p.name for p in winners]}')
                 for winner in winners:
                     winner.status = 'won'
                     winner.balance += int(self.pot / len(winners))
-                    
+
                 self.status = 'finished'
                 self.notify_all([p.name for p in winners])
                 print("KONIEC")

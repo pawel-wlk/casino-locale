@@ -54,7 +54,8 @@ class BlackjackBot(BlackjackPlayer):
                          for c in game_data['croupier']['hand']]
         player = [p for p in game_data['players']
                   if p['player'] == self.name][0]
-        player_hand = [Rank[c['rank']] for c in player['hand'][player['current_hand']]]
+        player_hand = [Rank[c['rank']]
+                       for c in player['hand'][player['current_hand']]]
         player_hand_sum = player['sum']
         next_move = self.strategy.next_move(
             croupier_hand[0], player_hand, player_hand_sum, self.splitted)
@@ -116,9 +117,9 @@ class Strategy:
         # should be accepted. Non-negative value means that every number greater than it
         # should be accepted
         sign = math.copysign(1, move.value)
-        compare = lambda x: x >= move.value
+        def compare(x): return x >= move.value
         if sign < 0:
-            compare = lambda x: x >= move.value
+            def compare(x): return x >= move.value
 
         if compare(self.real_value):
             return move.extra_move

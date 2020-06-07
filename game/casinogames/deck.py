@@ -36,14 +36,12 @@ class Deck:
     def __init__(self, amount=1):
         self.reset(amount)
 
-
     def reset(self, amount):
         cards = []
         for _ in range(amount):
             cards += [Card(suit, rank) for suit in Suit for rank in Rank]
         random.shuffle(cards)
         self.cards = cards
-
 
     def get_cards(self, count):
         return_cards = self.cards[:count]
@@ -55,10 +53,8 @@ class Hand:
     def __init__(self):
         self.cards = []
 
-
     def add_cards(self, new_cards):
         self.cards += new_cards
 
-    
     def get_as_dict(self):
         return [{'suit': c.suit.name, 'rank': c.rank.name} for c in self.cards]

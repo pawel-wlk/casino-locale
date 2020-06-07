@@ -14,6 +14,7 @@ from .casinogames.blackjack.blackjack_bot import BlackjackBot
 import re
 import time
 
+
 class GameRoomConsumer(JsonWebsocketConsumer):
     def join_room(self):
         async_to_sync(self.channel_layer.group_add)(
@@ -42,7 +43,7 @@ class GameRoomConsumer(JsonWebsocketConsumer):
         if current_games[self.room_name]['room_type'] == 'blackjack':
             self.croupier = BlackjackCroupier.get_instance(self.room_name)
             player = BlackjackPlayer(self.user.username, self.channel_name)
-        else: 
+        else:
             self.croupier = PokerCroupier.get_instance(self.room_name)
             player = PokerPlayer(self.user.username, self.channel_name)
 

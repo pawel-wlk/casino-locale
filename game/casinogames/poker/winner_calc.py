@@ -4,6 +4,7 @@ from .. deck import Suit
 
 # gets the most common element from a list
 
+
 def Most_Common(lst):
     data = Counter(lst)
     return data.most_common(1)[0]
@@ -25,7 +26,7 @@ def convert(dict_list):
         elif card.rank == 10:
             f = "T"
         elif card.rank == 11:
-            f = "A" 
+            f = "A"
         elif card.rank == 12:
             f = "J"
         elif card.rank == 13:
@@ -36,7 +37,9 @@ def convert(dict_list):
     return cards
 
 # gets card value from  a hand. converts A to 14,  is_seq function will convert the 14 to a 1 when necessary to evaluate A 2 3 4 5 straights
-def convert_tonums(h, nums = {'T':10, 'J':11, 'Q':12, 'K':13, "A": 14}):
+
+
+def convert_tonums(h, nums={'T': 10, 'J': 11, 'Q': 12, 'K': 13, "A": 14}):
     for x in range(len(h)):
 
         if (h[x][0]) in nums.keys():
@@ -60,20 +63,19 @@ def is_royal(h):
         return False
 
 
-# converts hand to number valeus and then evaluates if they are sequential  AKA a straight  
+# converts hand to number valeus and then evaluates if they are sequential  AKA a straight
 def is_seq(h):
     ace = False
     r = h[:]
 
     h = [x[:-1] for x in convert_tonums(h)]
 
-
     h = [int(x) for x in h]
     h = list(sorted(h))
     ref = True
-    for x in range(0,len(h)-1):
+    for x in range(0, len(h)-1):
         if not h[x]+1 == h[x+1]:
-            ref =  False
+            ref = False
             break
 
     if ref:
@@ -86,13 +88,15 @@ def is_seq(h):
                 h[x] = 1
 
     h = list(sorted(h))
-    for x in range(0,len(h)-1):
+    for x in range(0, len(h)-1):
         if not h[x]+1 == h[x+1]:
 
             return False
     return True, r
 
 # call set() on the suite values of the hand and if it is 1 then they are all the same suit
+
+
 def is_flush(h):
     suits = [x[-1] for x in h]
     if len(set(suits)) == 1:
@@ -131,6 +135,8 @@ def is_fullhouse(h):
     return False
 
 # if the first 2 most common elements have counts of 2 and 2 then it is a two pair
+
+
 def is_twopair(h):
     h = [a[:-1] for a in h]
     data = Counter(h)
@@ -140,33 +146,37 @@ def is_twopair(h):
     return False
 
 
-#if the first most common element is 2 then it is a pair
-# DISCLAIMER: this will return true if the hand is a two pair, but this should not be a conflict because is_twopair is always evaluated and returned first 
+# if the first most common element is 2 then it is a pair
+# DISCLAIMER: this will return true if the hand is a two pair, but this should not be a conflict because is_twopair is always evaluated and returned first
 def is_pair(h):
     h = [a[:-1] for a in h]
     data = Counter(h)
     a = data.most_common(1)[0]
 
     if str(a[1]) == '2':
-        return True, (a[0]) 
+        return True, (a[0])
     else:
         return False
 
-#get the high card 
+# get the high card
+
+
 def get_high(h):
-    return list(sorted([int(x[:-1]) for x in convert_tonums(h)], reverse =True))[0]
+    return list(sorted([int(x[:-1]) for x in convert_tonums(h)], reverse=True))[0]
 
 # FOR HIGH CARD or ties, this function compares two hands by ordering the hands from highest to lowest and comparing each card and returning when one is higher then the other
+
+
 def compare(xs, ys):
-  xs, ys = list(sorted(xs, reverse =True)), list(sorted(ys, reverse = True))
+    xs, ys = list(sorted(xs, reverse=True)), list(sorted(ys, reverse=True))
 
-  for i, c in enumerate(xs):
-    if ys[i] > c:
-        return 'RIGHT'
-    elif ys[i] < c:
-        return 'LEFT'
+    for i, c in enumerate(xs):
+        if ys[i] > c:
+            return 'RIGHT'
+        elif ys[i] < c:
+            return 'LEFT'
 
-  return "TIE"
+    return "TIE"
 
 
 # categorized a hand based on previous functions
@@ -174,8 +184,8 @@ def evaluate_hand(h):
 
     if is_royal(h):
         return "ROYAL FLUSH", h, 10
-    elif is_seq(h) and is_flush(h) :
-        return "STRAIGHT FLUSH", h, 9 
+    elif is_seq(h) and is_flush(h):
+        return "STRAIGHT FLUSH", h, 9
     elif is_fourofakind(h):
         _, fourofakind = is_fourofakind(h)
         return "FOUR OF A KIND", fourofakind, 8
@@ -195,22 +205,21 @@ def evaluate_hand(h):
         return "TWO PAIR", two_pair, 3
     elif is_pair(h):
         _, pair = is_pair(h)
-        return "PAIR", pair, 2 
+        return "PAIR", pair, 2
     else:
         return "HIGH CARD", h, 1
 
-
-
-#this monster function evaluates two hands and also deals with ties and edge cases
+# this monster function evaluates two hands and also deals with ties and edge cases
 # this probably should be broken up into separate functions but aint no body got time for that
-def compare_hands(h1,h2):
+def compare_hands(h1, h2):
     one, two = evaluate_hand(h1), evaluate_hand(h2)
     if one[0] == two[0]:
 
-        if one[0] =="STRAIGHT FLUSH":
+        if one[0] == "STRAIGHT FLUSH":
 
             sett1, sett2 = convert_tonums(h1), convert_tonums(h2)
-            sett1, sett2 = [int(x[:-1]) for x in sett1], [int(x[:-1]) for x in sett2]
+            sett1, sett2 = [int(x[:-1])
+                            for x in sett1], [int(x[:-1]) for x in sett2]
             com = compare(sett1, sett2)
 
             if com == "TIE":
@@ -223,12 +232,12 @@ def compare_hands(h1,h2):
         elif one[0] == "TWO PAIR":
 
             leftover1, leftover2 = is_twopair(h1), is_twopair(h2)
-            twm1, twm2 = max([int(x) for x in list(leftover1[1])]), max([int(x) for x in list(leftover2[1])])
+            twm1, twm2 = max([int(x) for x in list(leftover1[1])]), max(
+                [int(x) for x in list(leftover2[1])])
             if twm1 > twm2:
                 return "left", one[0], one[1]
             elif twm1 < twm2:
                 return "right", two[0], two[1]
-
 
             if compare(list(leftover1[1]), list(leftover2[1])) == "TIE":
                 l1 = [x[:-1] for x in h1 if x[:-1] not in leftover1[1]]
@@ -239,27 +248,25 @@ def compare_hands(h1,h2):
                     return "left", one[0], one[1]
                 else:
                     return "right", two[0], two[1]
-            elif compare(list(leftover1[1]), list(leftover2[1]))  == "RIGHT":
+            elif compare(list(leftover1[1]), list(leftover2[1])) == "RIGHT":
                 return "right", two[0], two[1]
-            elif  compare(list(leftover1[1]), list(leftover2[1]))  == "LEFT":
+            elif compare(list(leftover1[1]), list(leftover2[1])) == "LEFT":
                 return "left", one[0], one[1]
-
 
         elif one[0] == "PAIR":
             sh1, sh2 = int(is_pair(h1)[1]), int(is_pair(h2)[1])
             if sh1 == sh2:
 
-                c1 = [int(x[:-1]) for x in convert_tonums(h1) if not int(sh1) == int(x[:-1])]
-                c2 = [int(x[:-1]) for x in convert_tonums(h2) if not int(sh1) == int(x[:-1])]
+                c1 = [int(x[:-1]) for x in convert_tonums(h1)
+                      if not int(sh1) == int(x[:-1])]
+                c2 = [int(x[:-1]) for x in convert_tonums(h2)
+                      if not int(sh1) == int(x[:-1])]
                 if compare(c1, c2) == "TIE":
                     return "none", one[1], two[1]
                 elif compare(c1, c2) == "RIGHT":
                     return "right", two[0], two[1]
                 else:
                     return "left", one[0], one[1]
-
-
-
 
             elif h1 > h2:
                 return "right", two[0], two[1]
@@ -268,14 +275,16 @@ def compare_hands(h1,h2):
 
         elif one[0] == 'FULL HOUSE':
 
-            fh1, fh2 =  int(is_fullhouse(h1)[1][0][0]), int(is_fullhouse(h2)[1][0][0])
+            fh1, fh2 = int(is_fullhouse(h1)[1][0][0]), int(
+                is_fullhouse(h2)[1][0][0])
             if fh1 > fh2:
                 return "left", one[0], one[1]
             else:
                 return "right", two[0], two[1]
         elif one[0] == "HIGH CARD":
             sett1, sett2 = convert_tonums(h1), convert_tonums(h2)
-            sett1, sett2 = [int(x[:-1]) for x in sett1], [int(x[:-1]) for x in sett2]
+            sett1, sett2 = [int(x[:-1])
+                            for x in sett1], [int(x[:-1]) for x in sett2]
             com = compare(sett1, sett2)
             if com == "TIE":
                 return "none", one[1], two[1]
@@ -284,10 +293,8 @@ def compare_hands(h1,h2):
             else:
                 return "left", one[0], one[1]
 
-
-
         elif len(one[1]) < 5:
-            if max(one[1])  == max(two[1]):
+            if max(one[1]) == max(two[1]):
                 return "none", one[1], two[1]
             elif max(one[1]) > max(two[1]):
                 return "left", one[0], one[1]
@@ -295,9 +302,10 @@ def compare_hands(h1,h2):
                 return "right", two[0], two[1]
         else:
             n_one, n_two = convert_tonums(one[1]), convert_tonums(two[1])
-            n_one, n_two = [int(x[:-1]) for x in n_one], [int(x[:-1]) for x in n_two]
+            n_one, n_two = [int(x[:-1])
+                            for x in n_one], [int(x[:-1]) for x in n_two]
 
-            if max(n_one)  == max(n_two):
+            if max(n_one) == max(n_two):
                 return "none", one[1], two[1]
             elif max(n_one) > max(n_two):
                 return "left", one[0], one[1]
@@ -307,5 +315,4 @@ def compare_hands(h1,h2):
         return "left", one[0], one[1]
     else:
         return "right", two[0], two[1]
-
 

@@ -1,6 +1,5 @@
 from abc import abstractmethod
 from .deck import Deck, Card, Hand
-
 from ..models import current_games
 
 
@@ -15,7 +14,6 @@ class Croupier:
         Croupier.instances[room_name] = cls(room_name, 2)
         return Croupier.instances[room_name]
 
-    
     def __init__(self, room_name, number_of_decks=1):
         self.players = []
         self.deck = Deck(number_of_decks)
@@ -25,17 +23,14 @@ class Croupier:
         self.room_name = room_name
         # self.init_game()
 
-
     def is_ready(self):
         return len(self.players) > 0 and all([player.ready for player in self.players])
-
 
     def add_player(self, player):
         if self.is_ready():
             return False
         self.players.append(player)
         return True
-
 
     def delete_player(self, channel_name):
         res = [player for player in self.players if player.channel_name == channel_name]
@@ -51,7 +46,6 @@ class Croupier:
         if deleted_player.his_turn:
             self.next_turn()
 
-
     def player_ready(self, channel_name):
         res = [player for player in self.players if player.channel_name == channel_name]
         if len(res) == 0:
@@ -61,7 +55,6 @@ class Croupier:
         if res[0].status == 'waiting' and self.is_ready():
             current_games[self.room_name]['pending'] == True
             self.init_game()
-
 
     def next_turn(self):
         search_res = [i for i, p in enumerate(self.players) if p.his_turn]
@@ -74,16 +67,13 @@ class Croupier:
         self.players[(i + 1) % len(self.players)].his_turn = True
         print(self.players[(i + 1) % len(self.players)].name)
 
-
     @abstractmethod
     def init_game(self):
         pass
 
-
     # croupier does his job here
     # after that calls update() on some players that send info to channels
-    
+
     @abstractmethod
     def process_move(self, channel_name, move):
         pass
-        
