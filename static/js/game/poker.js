@@ -40,9 +40,11 @@ window.addEventListener('load', () => {
     gameSocket.addEventListener('message', message => {
         const data = JSON.parse(message.data); // parse data
 
-        inputs.forEach(input => {
-            input.disabled = !data.message.player.available_moves.includes(input.dataset['action']);
-        });
+        if (data.message.player) {
+            inputs.forEach(input => {
+                input.disabled = !data.message.player.available_moves.includes(input.dataset['action']);
+            });
+        }
 
         if (data.message.players) {
             data.message.players.forEach(player => {
