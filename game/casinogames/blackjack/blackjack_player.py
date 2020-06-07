@@ -23,7 +23,7 @@ class BlackjackPlayer(Player):
 
     def calc_available_moves(self):
         if self.status == 'waiting':
-            self.available_moves = ['get_ready']
+            self.available_moves = ['ready', 'add_bot']
             return self.available_moves
 
         if not self.his_turn:

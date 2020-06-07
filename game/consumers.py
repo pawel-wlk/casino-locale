@@ -83,6 +83,7 @@ class GameRoomConsumer(JsonWebsocketConsumer):
                 self.croupier.add_player(BlackjackBot(
                     bot_name, bot_name, 2, self.croupier))
                 print(f'Bot added: {bot_name}')
+                self.croupier.notify_all()
         else:
 
             self.room_send(
