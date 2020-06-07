@@ -12,6 +12,8 @@ window.addEventListener('load', () => {
     const yourBalance = document.getElementById('your-balance');
     const gameSocket = new WebSocket(`ws://${window.location.host}/ws/room/${roomName}/`);
 
+    const playerList = document.getElementById('player-list');
+
     const inputs = document.querySelectorAll('input');
     inputs.forEach(input => {
         if (input.type !== 'number')
@@ -41,6 +43,20 @@ window.addEventListener('load', () => {
         inputs.forEach(input => {
             input.disabled = !data.message.player.available_moves.includes(input.dataset['action']);
         });
+
+        if (data.message.players) {
+            data.message.players.forEach(player => {
+                const row = document.createElement('tr');
+                const name = document.createElement('td');
+                const status = document.createElement('td');
+
+                name.textContent = player.player;
+                status.textContent = player.status;
+
+                row.append(name, status);
+                playerList.append(row);
+            });
+        }
 
         potSum.textContent = data.message.pot;
         yourBalance.textContent = data.message.player.balance;
