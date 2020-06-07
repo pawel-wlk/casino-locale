@@ -18,11 +18,25 @@ window.addEventListener('load', () => {
         if (input.type !== 'number')
             input.addEventListener('click', event => {
                 const payload = {
-                    type: event.target.dataset['action'] === 'ready' ? 'init' : 'move',
                     message: {
                         action: event.target.dataset['action']
                     }
                 };
+
+                switch (event.target.dataset['action']) {
+                    case 'ready': {
+                        payload.type = 'init';
+                        break;
+                    }
+                    case 'add_bot': {
+                        payload.type = 'config';
+                        break;
+                    }
+                    default: {
+                        payload.type = 'move';
+                        break;
+                    }
+                }
 
                 if (event.target.dataset['action'] === 'bet') {
                     payload.message.value = Number.parseInt(document.getElementById('bet-value').value);
